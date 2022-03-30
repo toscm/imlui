@@ -1,7 +1,9 @@
 version: "3.9"
 services:
-  shinyserver:
+  imlui:
     build: .
-    image: toscm/install-and-run-imlui:1.0.0
+    image: toscm/install-and-run-imlui:${IMLUI_VERSION:-latest}
+    stdin_open: true # like docker run -i
+    tty: true # like docker run -t
     ports:
-      - "80:80"
+      - "8080:8080"

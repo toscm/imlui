@@ -42,7 +42,7 @@ devtools::install_github("toscm/imlui")
 
 ### Important Paths
 
-In this documentation the directories `IMLUI_CONFIG_DIR` and `IMLUI_DATA_DIR` and the file `IMLUI_CONFIG` are referenced. Their exact path depends on the used operating system as well as other environment settings. The algorithm to determine their exact paths is as follows:
+In this documentation the directories `IMLUI_PACKAGE_DIR`, `IMLUI_CONFIG_DIR` and `IMLUI_DATA_DIR` and the file `IMLUI_CONFIG` are referenced. Their exact path depends on the used operating system as well as other environment settings. The algorithm to determine their exact paths is as follows:
 
 TODO
 
@@ -57,9 +57,9 @@ All configuration options for `imlui` live in a single configuration file `imlui
 5. $HOME/.config/imlui/
 6. $USERPROFILE/.config/imlui/
 
-If multiple `imlui_config.yml` files exist, only the first one is used. If no `imlui.yml` can be found, a new file `imlui_config.yml` is created at the first directory from above, that already exists. Checking for existence is done in the the same order as listed above, except for option 2 (the current working directory), which is checked last (and acts as a last fallback, because it always exists).
+If multiple `imlui_config.yml` files exist, only the first one is used. If no `imlui.yml` can be found, a new file `imlui_config.yml` is created at the first directory from above, that already exists. Checking for existence is done in the same order as listed above, except for option 2 (the current working directory), which is checked last (and acts as a last fallback, because it always exists).
 
-For an example configuration file see [inst/home/.config/imlui_config.yml](inst/home/.config/imlui_config.yml).
+For an example configuration file see [inst/assets/yml/imlui_config.yml](inst/assets/yml/imlui_config.yml).
 
 ### Data Storage
 
