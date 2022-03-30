@@ -1,0 +1,7 @@
+version: "3.9"
+services:
+  shinyserver:
+    build: .
+    image: toscm/install-and-run-imlui:1.0.0
+    ports:
+      - "80:80"

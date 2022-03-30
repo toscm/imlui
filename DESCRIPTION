@@ -1,0 +1,51 @@
+Package: imlui
+Title: A GUI and CLI for IML
+Version: 0.0.0.9018
+Authors@R:
+    person(given = "Tobias",
+           family = "Schmidt",
+           role = c("aut", "cre"),
+           email = "tobias2.schmidt@ukr.de")
+Description: Provides a grafical user interface (GUI) and a commandline interface (CLI) to interactively explore interpretable machine learning (IML) methods.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Imports:
+    configr,
+    DBI,
+    docopt,
+    dplyr,
+    DT,
+    ggplot2,
+    glue,
+    httr,
+    lubridate,
+    plyr,
+    purrr,
+    rlang,
+    RSQLite,
+    shiny,
+    shinyauthr,
+    shinyjs,
+    shiny.router,
+    shinycssloaders,
+    shinydashboard,
+    shinymanager,
+    shinytest,
+    shinyWidgets,
+    stringr,
+    svglite,
+    testthat,
+    tibble,
+    toscutil,
+    waiter
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Depends:
+    R (>= 2.10)
+Remotes:
+    toscm/toscutil,
+    toscm/toscmask
