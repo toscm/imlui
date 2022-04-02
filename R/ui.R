@@ -1,16 +1,5 @@
-.shinyUI <- function(request) {
-	logsn("Started .shinyUI from process ID:", Sys.getpid())
-	###### Load Config #################################################################################################
-	# NOTE: config is currently loaded twice. Once in UI (readonly) and once in Server (readwrite). Maybe improve later.
-	logsn("Loading user config from UI...")
-	filter <- dplyr::filter
-	config <- readUserCnf()
-	settings <- as.list(config$Settings$Value)
-	appstate <- as.list(config$Appstate$Value)
-	names(settings) <- config$Settings$ID
-	names(appstate) <- config$Appstate$ID
-	model_names <- dplyr::filter(config$Models, Symbol != "")$Name
-	dataset_names <- dplyr::filter(config$Datasets, Symbol != "")$ID
+imluiUI <- function(request) {
+	logsne("Starting imluiUI from process ID:", Sys.getpid(), "...")
 	##### Actual UI ####################################################################################################
 	tagList(
 		tags$head(

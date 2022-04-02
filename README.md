@@ -50,9 +50,9 @@ TODO
 
 All configuration options for `imlui` live in a single configuration file `imlui_config.yml`. The following directories are checked for `imlui_config.yml`:
 
-1. The directory specified by commandline parameter `--config`
+1. The directory specified by commandline parameter `--config-file`
 2. The current working directory
-3. $IMLUI_CONFIG/
+3. $IMLUI_CONFIG_DIR/
 4. $XDG_CONFIG_HOME/imlui/
 5. $HOME/.config/imlui/
 6. $USERPROFILE/.config/imlui/

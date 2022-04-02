@@ -1,9 +1,12 @@
+# You can use ${IMLUI_CONFIG_DIR} to specify paths relativ to where imlui
+# stores its config files.
+# dbms:
+#   type: postgres
+#   hostname: localhost
+#   port: 5432
+#   database: imluidb
+#   username: testuser
+#   password: K59#vnUPP4Q#
 dbms:
-  # type: postgres
-  # hostname: localhost
-  # port: 5432
-  # database: imluidb
-  # username: testuser
-  # password: K59#vnUPP4Q#
   type: sqlite
-  filepath: ${IMLUI_CONFIG_DIR}/imlui_settings.sqlite
+  filepath: ${IMLUI_CONFIG_DIR}/imlui_db.sqlite

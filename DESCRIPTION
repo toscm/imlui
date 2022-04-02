@@ -40,7 +40,8 @@ Imports:
     testthat,
     tibble,
     toscutil,
-    waiter
+    waiter,
+    RPostgres
 Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

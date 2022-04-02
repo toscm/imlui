@@ -7,7 +7,7 @@
 #' @import stringr
 #' @import svglite
 #' @import tibble
-#' @import plyr
+# #' @import plyr
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr rename
 #' @importFrom dplyr select
