@@ -2,21 +2,18 @@
 % Please edit documentation in R/misc.R
 \name{predict.numeric}
 \alias{predict.numeric}
-\title{Predict method for linear models provided as plain named vectors}
+\title{Predict S3 Method for numeric Vectors}
 \usage{
-\method{predict}{numeric}(b, X, fm = NULL)
+\method{predict}{numeric}(object, ...)
 }
 \arguments{
-\item{b}{Named numeric vector}
+\item{object}{Named numeric vector}
 
-\item{X}{Numeric matrix with \code{names(b) \%in\% c("Intercept", colnames(X))}}
+\item{...}{Numeric matrix with \code{names(b) \%in\% c("Intercept", colnames(X))}}
 }
 \value{
-
+Vector of predicted scores
 }
 \description{
 Predict method for linear models provided as plain named vectors
-}
-\examples{
-TODO: remove this method and make `lamis_signature` an object with a own predict method
 }

@@ -47,6 +47,7 @@ imluiServer <- function(input, output, session) {
 			# columns are also okay and will be made available to the app after log in as
 			# columns in credentials()$user_auth
 			# TODO: Based on shinyauthr example (cite!)
+			login_time <- NULL # TODO: remove tidyverse NSE stuff
 			db$mapping_users_sessions %>%
 				dplyr::mutate(login_time = lubridate::ymd_hms(login_time)) %>%
 				tibble::as_tibble() %>%
@@ -60,7 +61,7 @@ imluiServer <- function(input, output, session) {
 			tibble::tibble(
 				user_id=user_id,
 				session_id=session_id,
-				login_time=as.character(now())
+				login_time=as.character(lubridate::now())
 			) %>%
 			DBI::dbWriteTable(db_conn, "mapping_users_sessions", ., append=TRUE)
 		}

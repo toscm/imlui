@@ -17,14 +17,11 @@ makeMSDPlot(dd, xx, xt, yt, ff = NULL, shape = ".")
 
 \item{ff}{vector(char), feature names to draw, if \code{is.none(ff)}, all features are drawn}
 
-\item{sh}{char, character shape to use, not implemented yet}
+\item{shape}{char, character shape to use, not implemented yet}
 }
 \value{
 TODO
 }
 \description{
 The mean against standard deviation for each feature in a list of datasets. The datasets must not contain non numeric columns.
-}
-\examples{
-TODO
 }

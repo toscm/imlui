@@ -1,26 +1,7 @@
-draw_debug_boxes <- function(
-        fig=NA, mar=NA, pcol="red", fcol="green", ocol="blue"
-    ) {
-    # Signature
-    if (any(!is.na(fig))) {
-        par(fig=fig, mar=mar, new=TRUE)
-        for (side in seq(4)) {
-            if (mar[side] >= 1) {
-                for (line in seq(0, mar[side])) {
-                    mtext(line, side=side, line=line, adj=1, col=pcol)
-                    box(which="plot", col=pcol)
-                }
-            }
-        }
-    }
-    if (!is.na(pcol)) { box(which="plot", col=pcol) }
-    if (!is.na(fcol)) { box(which="figure", col=fcol) }
-    if (!is.na(ocol)) { box(which="outer", col=ocol) }
-}
-
-
-#' Visualize feature effetcs for linear models of the form  y = X * b
-#'
+#' @export
+#' @name plot_feature_effects
+#' @title Visualize Feature Effects
+#' @description Visualize feature effects for linear models of the form  y = X * b
 #' @param X dataset (n*m matrix)
 #' @param b betas of linear model (named m*1 vector)
 #' @param s sample of interest
@@ -28,12 +9,7 @@ draw_debug_boxes <- function(
 #' @param n_extreme how many samples from X to draw into the plot?
 #' Samples are taken from both end of the y spectrum, i.e.
 #' @param threshold threshold for classification setting
-#'
-#' @return
-#' @export
-#'
-#' @examples
-#' TODO
+#' @return `par(opar)``
 plot_feature_effects <- function(
         b,
         X,
@@ -242,59 +218,27 @@ plot_feature_effects <- function(
     par(opar)
 }
 
-#' Visualize feature contributions for linear models of the form  y = X * b
-#'
-#' @return
-#' @export
-#'
-#' @examples
-#' TODO
-plot_feature_contribution <- function(){}
-
-#' Visualize numeric predictions `ys` made for datasets `names(ys)`
-#'
-#' @param predictions as the name says (named list of named numeric vectors)
-#' @param density_lines add density lines to the plot (logical)? (logical)
-#' @param histogram add a histogram to the plot? (logical)
-#' @param rug add rugs to the plot? (logical)
-#' @param legend add a legend to the plot explaining `names(predictions)`? (logical)
-#'
-#' @return
-#' @export
-#'
-#' @examples
-#' TODO
-FEP <- function(predictions, density_lines=TRUE, rug=TRUE, legend=TRUE) {
-    # str(predictions)
-    # $ lamis_train: Named num [1:233] -0.6801 -1.0086 -1.3742 -0.7987 0.0305 ...
-    # ..- attr(*, "names")= chr [1:233] "GSM275076" "GSM275077" "GSM275078" "GSM275079" ...
-    # $ lamis_test1: Named num [1:181] -0.505 -1.541 -0.244 -0.483 -0.156 ...
-    # ..- attr(*, "names")= chr [1:181] "GSM274895" "GSM274896" "GSM274897" "GSM274898" ...
-    # $ lamis_test2: Named num [1:466] 0.822 1.203 1.219 0.91 1.096 ...
-    # ..- attr(*, "names")= chr [1:466] "Ricover60.S99" "Ricover60.S101" "Ricover60.S102" ...
-    datasets <- names(predictions)
-    dfs <- lapply(1:length(predictions), function(i) {
-        y <- predictions[[i]]
-        data.frame(dataset=rep(datasets[[i]], length(y)), samples=names(y), y=y)
-    })
-    df <- plyr::rbind.fill(dfs)
-    binwidth <- ceiling10(diff(range(df$y))) / 100
-    # head(df)
-    #       dataset   samples           y
-    # 1 lamis_train GSM275076 -0.68014232
-    # 2 lamis_train GSM275077 -1.00861666
-    # 3 lamis_train GSM275078 -1.37423898
-    # 4 lamis_train GSM275079 -0.79874698
-    # 5 lamis_train GSM275080  0.03045401
-    # 6 lamis_train GSM275081 -0.61785528
-    grafic <- ggplot2::ggplot(df, ggplot2::aes(x=y))
-    grafic <- grafic + ggplot2::geom_histogram(ggplot2::aes(color=dataset, fill=dataset), binwidth=binwidth, alpha=0.2, size=1)
-    if (rug) {grafic <- grafic + ggplot2::geom_rug(ggplot2::aes(color=dataset))}
-    if (legend) {grafic <- grafic + ggplot2::theme(legend.position="top")}
-    return(grafic)
+draw_debug_boxes <- function(
+        fig=NA, mar=NA, pcol="red", fcol="green", ocol="blue"
+    ) {
+    # Signature
+    if (any(!is.na(fig))) {
+        par(fig=fig, mar=mar, new=TRUE)
+        for (side in seq(4)) {
+            if (mar[side] >= 1) {
+                for (line in seq(0, mar[side])) {
+                    mtext(line, side=side, line=line, adj=1, col=pcol)
+                    box(which="plot", col=pcol)
+                }
+            }
+        }
+    }
+    if (!is.na(pcol)) { box(which="plot", col=pcol) }
+    if (!is.na(fcol)) { box(which="figure", col=fcol) }
+    if (!is.na(ocol)) { box(which="outer", col=ocol) }
 }
 
-# # Genelist
+# GENELIST
 # par(fig=(c(8, 10, 5, 10) / 10), new=TRUE, mar=c(0, 0, 2, 0))
 # plot(x=NA, y=NA, xlim=c(0, 10), ylim=c(0, length(b)), xlab=NA, ylab=NA)
 # mtext("0", side=3, line=0, adj=1, col="green")
@@ -364,21 +308,3 @@ FEP <- function(predictions, density_lines=TRUE, rug=TRUE, legend=TRUE) {
 # [xy]axt: axis type ("n"=no plotting) ["s"]
 # [xy]log: TRUE= use log scale
 # xpd: (FALSE|TRUE|NA) = clip plotting to (plot|figure|device)-region
-
-# exit <- function(exitcode) {
-#     # Like pythons `sys.exit()`
-#     # https://docs.python.org/3/library/sys.html?highlight=exit#sys.exit
-#     opt <- options(show.error.messages = FALSE)
-#     on.exit(options(opt))
-#     stop()
-# }
-
-# exit <- function(exitcode) {
-#     quit(save="no", status=exitcode)
-# }
-
-visualize <- function(model, data) {
-    print("TODO")
-    print(model)
-    print(data)
-}

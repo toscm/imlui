@@ -7,13 +7,13 @@
 getdata(sym, typ, pkg, transpose)
 }
 \arguments{
-\item{sym:}{Symbol to get as character.}
+\item{sym}{Symbol to get as character.}
 
-\item{typ:}{Type of object (either "dataset" for dataset, or "model" for model).}
+\item{typ}{Type of object (either "dataset" for dataset, or "model" for model).}
 
-\item{pkg:}{In which package to look for \code{sym}.}
+\item{pkg}{In which package to look for \code{sym}.}
 
-\item{transpose:}{Transpose object after initialisation? (only used if \code{typ} == "dataset")}
+\item{transpose}{Transpose object after initialisation? (only used if \code{typ} == "dataset")}
 }
 \value{
 \code{obj: get(sym)}

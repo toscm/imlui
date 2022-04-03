@@ -31,7 +31,7 @@ imluiUI <- function(request) {
 			),
 			shinyjs::useShinyjs(), # loads js/css files in folder <R-Library-Path>/shiny/srcjs
 			shinyjs::extendShinyjs(
-				text = shinyauthr:::js_cookie_to_r_code("login_jscookie", expire_days = 7),
+				text = js_cookie_to_r_code(),
 				functions = c("getcookie", "setcookie", "rmcookie")
 			),
 			# shinyjs::extendShinyjs(
@@ -42,7 +42,7 @@ imluiUI <- function(request) {
 			# 	functions = c("getcookie", "setcookie", "rmcookie")
 			# ),
 			shinyjs::extendShinyjs(
-				text = shinyauthr:::js_return_click("login_password", "login_button"),
+				text = js_return_click(),
 				functions = c()
 			),
 			shinycssloaders::withSpinner(uiOutput(outputId="web_app"))

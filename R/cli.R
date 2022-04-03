@@ -68,7 +68,7 @@ Options:
 # cli(c("--help"))
 # @export
 runserver_cli <- function(argv) {
-    docopt:::docopt(runserver_cli_doc, args=argv)
+    docopt::docopt(runserver_cli_doc, args=argv)
     runserver()
 }
 
@@ -80,6 +80,6 @@ Options:
     -m, --model <model>   model to visualize
     -d, --data <dataset>  dataset to visualize"
 visualize_cli <- function(argv) {
-    args <- docopt:::docopt(visualize_cli_doc, args=argv)
-    imlui:::visualize(model = args$model, data = args$data)
+    args <- docopt::docopt(visualize_cli_doc, args=argv)
+    visualize(model = args$model, data = args$data)
 }

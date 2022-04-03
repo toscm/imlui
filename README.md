@@ -22,6 +22,7 @@ A user interface (UI) for Interpretable Machine Learning (IML) methods.
 - [Developer Guideline](#developer-guideline)
   - [Variables Naming Conventions](#variables-naming-conventions)
 - [UI Layout](#ui-layout)
+  - [How to submit to CRAN?](#how-to-submit-to-cran)
 
 ## Purpose
 
@@ -188,3 +189,20 @@ x Page
 * [4] TODO: Rename to Overview. Add options to display as description or corner matrix with dynamic 'n'.
 * [5] TODO: Rename ID to MA_P_T
 * [6] TODO: Renamed ID to MA_FEP_T
+
+### How to submit to CRAN?
+
+According to <https://r-pkgs.org/release.html> the following steps are necessary
+
+```R
+devtools::document() # Update documentation
+rcmdcheck::rcmdcheck( # Run `R CMD check` for this package
+    args=c("--no-manual", "--as-cran"),
+    build_args=c("--no-manual"),
+    check_dir="check"
+)
+devtools::revdep() # Run `R CMD check` for all dependencies
+devtools::spell_check() # Check spelling of package
+devtools::release() # Builds, tests and submits the package to CRAN.
+# Manual submission can be done at: https://cran.r-project.org/submit.html
+```
