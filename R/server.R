@@ -233,7 +233,7 @@ imluiServer <- function(input, output, session) {
 				if (length(GROUP_IDS()) != 1) {
 					ids <- c()
 				} else if (grepl("admin", GROUP_IDS())) {
-					ids <- db$Models$ID[db$Models$Symbol != ""]
+					ids <- db$Models$ID[db$Models$Symbol != "" & !is.na(db$Models$Symbol)]
 				} else {
 					mgm <- db$mapping_groups_models
 					ids1 <- mgm$model_id[stringr::str_detect(GROUP_IDS(), pattern=mgm$group_id)]
