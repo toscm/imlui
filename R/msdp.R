@@ -1,18 +1,22 @@
 #' @title Mean Standard Deviation Plot
-#'
 #' @description The mean against standard deviation for each feature in a list of datasets. The datasets must not contain non numeric columns.
-#'
 #' @param dd list(char), dataset names
 #' @param xx list(data.frame), covariate dataframes (must contain only numeric columns)
 #' @param xt char, how to transform the xaxis for plotting (options are 'identity', 'log2', 'log10' and 'rank')
 #' @param yt char, how to transform the xaxis for plotting (options are 'identity', 'log2', 'log10' and 'rank')
 #' @param ff vector(char), feature names to draw, if `is.none(ff)`, all features are drawn
-#' @param sh char, character shape to use, not implemented yet
-#'
+#' @param shape char, character shape to use, not implemented yet
 #' @return TODO
-#' @examples TODO
 makeMSDPlot <- function(dd, xx, xt, yt, ff=NULL, shape=".") {
     # message(glue("making MSD plot for: {collapseCS(dd)} (xt={xt}, yt={yt})"))
+    # TODO: remove tidyverse NSE shit to fix warnings below. Then remove stubs...
+    # makeMSDPlot: no visible binding for global variable 'x'
+    # makeMSDPlot: no visible binding for global variable 'y'
+    # makeMSDPlot: no visible binding for global variable 'label'
+    # makeMSDPlot: no visible binding for global variable 'dataset'
+    # makeMSDPlot: no visible binding for global variable 'feature'
+    x <- y <- label <- dataset <- feature <- NULL
+    # END TODO
     if (length(dd) == 0) {
         df <- data.frame(x=0, y=0, label="No dataset provided")
         ggplot(df, aes(x, y, label=label)) + geom_text() + theme_void()

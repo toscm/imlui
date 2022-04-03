@@ -1,0 +1,48 @@
+linters: list(
+    absolute_path_linter = absolute_path_linter(), # check that no absolute paths are used (e.g. "/var", "C:\System", "~/docs").
+    assignment_linter = assignment_linter(), # check that <- is always used for assignment
+    duplicate_argument_linter = duplicate_argument_linter(), # check that no duplicate arguments are supplied to function calls.
+    equals_na_linter = equals_na_linter(), # check for x == NA
+    missing_argument_linter = missing_argument_linter(), # check that no missing argument is supplied to function calls.
+    missing_package_linter = missing_package_linter(), # check that no packages loaded by library(), require(), loadNamespace(), and requireNamespace() are missing.
+    namespace_linter = namespace_linter(), # check if there are missing packages and symbols in namespace calls with :: and :::.
+    sprintf_linter = sprintf_linter(), # check that the numbers of arguments are correct and types of arguments are compatible in sprintf("string", ...) calls.
+    todo_comment_linter = todo_comment_linter(), # check that the source contains no TODO comments (case-insensitive).
+    T_and_F_symbol_linter = T_and_F_symbol_linter() # avoid the symbols T and F (for TRUE and FALSE).
+    # backport_linter = NULL, # checks for usage of unavailable functions. Not reliable for testing r-devel dependencies.
+    # camel_case_linter = NULL, # check that objects are not in camelCase.
+    # closed_curly_linter = NULL, # check that closed curly braces should always be on their own line unless they are followed by an else.
+    # commas_linter = NULL, # check that all commas are followed by spaces, but do not have spaces before them.
+    # commented_code_linter = NULL, # check that there is no commented code outside of roxygen comments.
+    # cyclocomp_linter = NULL, # check for overly complicated expressions.
+    # extraction_operator_linter = NULL, # check that the [[ operator is used when extracting a single element from an object, not [ (subsetting) nor $ (interactive use).
+    # function_left_parentheses_linter = NULL, # check that all left parentheses in a function call do not have spaces before them.
+    # implicit_integer_linter = NULL, # check that integers are explicitly typed using the form 1L instead of 1.
+    # infix_spaces_linter = NULL, # check that all infix operators have spaces around them.
+    # line_length_linter = NULL, # check the line length of both comments and code is less than length.
+    # no_tab_linter = NULL, # check that only spaces are used, never tabs.
+    # nonportable_path_linter = NULL, # check that file.path() is used to construct safe and portable paths.
+    # object_length_linter = NULL, # check that function and variable names are not more than length characters.
+    # object_name_linter = NULL, # check that object names conform to a single naming style, e.g. CamelCase, camelCase, snake_case, SNAKE_CASE, dotted.case, lowercase, or UPPERCASE.
+    # object_usage_linter = NULL, # check that closures have the proper usage using codetools::checkUsage(). Note this runs base::eval() on the code, so do not use with untrusted code.
+    # open_curly_linter = NULL, # check that opening curly braces are never on their own line and are always followed by a newline.
+    # paren_body_linter = NULL, # check that there is a space between right parenthesis and a body expression.
+    # paren_brace_linter = NULL, # check that there is a space between right parenthesis and an opening curly brace.
+    # pipe_call_linter = NULL, # force explicit calls in magrittr pipes.
+    # pipe_continuation_linter = NULL, # Check that each step in a pipeline is on a new line, or the entire pipe fits on one line.
+    # semicolon_terminator_linter = NULL, # check that no semicolons terminate statements.
+    # seq_linter = NULL, # check for 1:length(...), 1:nrow(...), 1:ncol(...), 1:NROW(...), and 1:NCOL(...) expressions. These often cause bugs when the right hand side is zero. It is safer to use seq_len() or seq_along() instead.
+    # single_quotes_linter = NULL, # check that only single quotes are used to delimit string constants.
+    # spaces_inside_linter = NULL, # check that parentheses and square brackets do not have spaces directly inside them.
+    # spaces_left_parentheses_linter = NULL, # check that all left parentheses have a space before them unless they are in a function call.
+    # trailing_blank_lines_linter = NULL, # check there are no trailing blank lines.
+    # trailing_whitespace_linter = NULL, # check there are no trailing whitespace characters.
+    # undesirable_function_linter = NULL, # report the use of undesirable functions, e.g. options or sapply and suggest an alternative.
+    # undesirable_operator_linter = NULL, # report the use of undesirable operators, e.g. ::: or <<- and suggest an alternative.
+    # unneeded_concatenation_linter = NULL, # check that the c function is not used without arguments nor with a single constant.
+    )
+exclusions: list()
+exclude: "# Exclude Linting"
+exclude_start: "# Begin Exclude Linting"
+exclude_end: "# End Exclude Linting"
+encoding: "UTF-8"

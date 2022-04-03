@@ -22,6 +22,7 @@ A user interface (UI) for Interpretable Machine Learning (IML) methods.
 - [Developer Guideline](#developer-guideline)
   - [Variables Naming Conventions](#variables-naming-conventions)
 - [UI Layout](#ui-layout)
+  - [How to submit to CRAN?](#how-to-submit-to-cran)
 
 ## Purpose
 
@@ -42,7 +43,7 @@ devtools::install_github("toscm/imlui")
 
 ### Important Paths
 
-In this documentation the directories `IMLUI_CONFIG_DIR` and `IMLUI_DATA_DIR` and the file `IMLUI_CONFIG` are referenced. Their exact path depends on the used operating system as well as other environment settings. The algorithm to determine their exact paths is as follows:
+In this documentation the directories `IMLUI_PACKAGE_DIR`, `IMLUI_CONFIG_DIR` and `IMLUI_DATA_DIR` and the file `IMLUI_CONFIG` are referenced. Their exact path depends on the used operating system as well as other environment settings. The algorithm to determine their exact paths is as follows:
 
 TODO
 
@@ -50,16 +51,16 @@ TODO
 
 All configuration options for `imlui` live in a single configuration file `imlui_config.yml`. The following directories are checked for `imlui_config.yml`:
 
-1. The directory specified by commandline parameter `--config`
+1. The directory specified by commandline parameter `--config-file`
 2. The current working directory
-3. $IMLUI_CONFIG/
+3. $IMLUI_CONFIG_DIR/
 4. $XDG_CONFIG_HOME/imlui/
 5. $HOME/.config/imlui/
 6. $USERPROFILE/.config/imlui/
 
-If multiple `imlui_config.yml` files exist, only the first one is used. If no `imlui.yml` can be found, a new file `imlui_config.yml` is created at the first directory from above, that already exists. Checking for existence is done in the the same order as listed above, except for option 2 (the current working directory), which is checked last (and acts as a last fallback, because it always exists).
+If multiple `imlui_config.yml` files exist, only the first one is used. If no `imlui.yml` can be found, a new file `imlui_config.yml` is created at the first directory from above, that already exists. Checking for existence is done in the same order as listed above, except for option 2 (the current working directory), which is checked last (and acts as a last fallback, because it always exists).
 
-For an example configuration file see [inst/home/.config/imlui_config.yml](inst/home/.config/imlui_config.yml).
+For an example configuration file see [inst/assets/yml/imlui_config.yml](inst/assets/yml/imlui_config.yml).
 
 ### Data Storage
 
@@ -188,3 +189,20 @@ x Page
 * [4] TODO: Rename to Overview. Add options to display as description or corner matrix with dynamic 'n'.
 * [5] TODO: Rename ID to MA_P_T
 * [6] TODO: Renamed ID to MA_FEP_T
+
+### How to submit to CRAN?
+
+According to <https://r-pkgs.org/release.html> the following steps are necessary
+
+```R
+devtools::document() # Update documentation
+rcmdcheck::rcmdcheck( # Run `R CMD check` for this package
+    args=c("--no-manual", "--as-cran"),
+    build_args=c("--no-manual"),
+    check_dir="check"
+)
+devtools::revdep() # Run `R CMD check` for all dependencies
+devtools::spell_check() # Check spelling of package
+devtools::release() # Builds, tests and submits the package to CRAN.
+# Manual submission can be done at: https://cran.r-project.org/submit.html
+```

@@ -16,6 +16,11 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/
   - `Fixed` for bug fixes
   - `Security` in case of vulnerabilities
 
+## [0.1.0] - 2022-04-03
+
+- `Changed`: Read/Store info in database instead of `config.json`
+- `Changed`: Version bump to 0.1.0
+
 ## [0.0.0.9018] - 2022-03-26
 
 - `Fixed`: DESCRIPTION Imports

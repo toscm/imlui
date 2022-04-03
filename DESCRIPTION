@@ -1,6 +1,6 @@
 Package: imlui
 Title: A GUI and CLI for IML
-Version: 0.0.0.9018
+Version: 0.1.0
 Authors@R:
     person(given = "Tobias",
            family = "Schmidt",
@@ -12,7 +12,10 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
+biocViews:
+LazyDataCompression:xz
 Imports:
+    Biobase,
     configr,
     DBI,
     docopt,
@@ -20,27 +23,31 @@ Imports:
     DT,
     ggplot2,
     glue,
+    htmltools,
     httr,
     lubridate,
+    magrittr,
     plyr,
     purrr,
     rlang,
+    RPostgres,
     RSQLite,
     shiny,
-    shinyauthr,
-    shinyjs,
     shiny.router,
+    shinyauthr,
     shinycssloaders,
     shinydashboard,
+    shinyjs,
     shinymanager,
     shinytest,
     shinyWidgets,
     stringr,
+    sodium,
     svglite,
-    testthat,
     tibble,
     toscutil,
-    waiter
+    waiter,
+    yaml
 Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
@@ -48,4 +55,5 @@ Depends:
     R (>= 2.10)
 Remotes:
     toscm/toscutil,
-    toscm/toscmask
+    toscm/toscmask,
+    r-lib/lintr
