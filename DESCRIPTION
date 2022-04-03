@@ -1,6 +1,6 @@
 Package: imlui
 Title: A GUI and CLI for IML
-Version: 0.0.0.9018
+Version: 0.1.0
 Authors@R:
     person(given = "Tobias",
            family = "Schmidt",

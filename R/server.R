@@ -25,6 +25,8 @@ imluiServer <- function(input, output, session) {
 			db[[tbl]] <- DBI::dbReadTable(db_conn, tbl)
 		}
 		rownames(db$users) <- db$users$user_id
+		rownames(db$Models) <- db$Models$ID
+		rownames(db$Datasets) <- db$Datasets$ID
 		# logsne("Creating table observers...")
 		# tbl_observers <- list()
 		# for (tbl in globals$TABLES) {
@@ -128,7 +130,7 @@ imluiServer <- function(input, output, session) {
 					logsne("\tname:", body$name %||% "NULL")
 					logsne("\temail:", body$email %||% "NULL")
 					if (!(body$id %in% db$users$github_id)) { # new user -> create new entry in DB
-						user <- list(
+						new_user <- list(
 							user_id = paste0("github_user_", body$id),
 							group_ids = "standard",
 							display_name = body$name,
@@ -139,9 +141,9 @@ imluiServer <- function(input, output, session) {
 							"INSERT INTO users
 							(user_id, group_ids, display_name, github_id, avatar_url)
 							VALUES ($1, $2, $3, $4, $5)",
-							params=unname(user)
+							params=unname(new_user)
 						)
-						db$users[user$user_id, names(user)] <- user
+						db$users[new_user$user_id, names(new_user)] <- new_user
 					}
 					RV$user$id <- db$users$user_id[which(db$users$github_id == body$id)] # use which to get rid of NAs
 					RV$user$is_authenticated <- TRUE # TODO: remove this. If user$id is NULL, we're not authenticated...
@@ -156,9 +158,6 @@ imluiServer <- function(input, output, session) {
 		logsne("Generating init values from database...")
 		settings <- isolate({x <- db$Settings$Value; names(x) <- db$Settings$ID; x})
 	########## Configure Bookmark excludes #############################################################################
-		models <- dplyr::filter(db$Models, Symbol != "")$Symbol
-		model_names <- dplyr::filter(db$Models, Symbol != "")$Name
-		dataset_names <- dplyr::filter(db$Datasets, Symbol != "")$ID
 		logsne("Configuring Bookmark excludes...")
 		setBookmarkExclude(c(
 			"dim",
@@ -207,51 +206,159 @@ imluiServer <- function(input, output, session) {
 
 
 	########## Define Reactives ########################################################################################
+		# Helpers
+			# Duplicated letters like MM indicate lists, so you can do `for (M in MM)`
+			# Tripled letters like YYY indicate list of lists `for (M in MM) {for (D in DD) {YYY[[M]][[D]]}}`
+			r  <- reactive
+			l  <- clapply
 
-		# Duplicated letters like MM indicate lists, so you can do `for (M in MM)`
-		# Tripled letters like YYY indicate list of lists `for (M in MM) {for (D in DD) {YYY[[M]][[D]]}}`
-		r  <- reactive
-		l  <- clapply
+		# User Data
+			logsne("Initializing User Data Reactives")
+			USER <- r({ db$users[RV$user$id, ] }) # 1x9 or 0x9 data.frame
+			USER_ID <- r({ USER()$user_id }) # character vector of length 0 or 1
+			GROUP_IDS <- r({ USER()$group_ids }) # character vector of length 0 or 1
+			DISPLAY_NAME <- r({ USER()$group_ids }) # character vector of length 0 or 1
+			GITHUB_ID <- r({ USER()$user_id }) # character vector of length 0 or 1
+			AVATAT_URL <- r({ USER()$avatat_url }) # character vector of length 0 or 1
+			PASSWORD <- r({ USER()$password }) # character vector of length 0 or 1
+			GITLAB_ID <- r({ USER()$gitlab_id }) # character vector of length 0 or 1
+			GOOGLE_ID <- r({ USER()$google_id }) # character vector of length 0 or 1
+			SPANG_LAB_GITLAB_ID <- r({ USER()$spang_lab_gitlab_id }) # character vector of length 0 or 1
+			SPANG_LAB_AUTH_ID <- r({ USER()$spang_lab_auth_id }) # character vector of length 0 or 1
 
-		APAH      <- r({ PAHS[max(which(PAHS < (MPH() - 120)), 1)] }) # APAH = Automatic Plot Area Height = num
-		APAW      <- r({ PAWS[max(which(PAWS < (MPW() -   0)), 1)] }) # APAW = Automatic Plot Area Width = num
-		BH        <- r({ if (is.null(II$dim[2])) 480 else II$dim[2] })  # BH = Browser Height = num
-		BW        <- r({ if (is.null(II$dim[1])) 640 else II$dim[1] })  # BW = Browser Width = num
-		MPAH      <- r({ II$MPAH })  # MPAH = Manual Plot Area Height = num
-		MPAW      <- r({ II$MPAW })  # MPAW = Manual Plot Area Width = num
-		MPH       <- r({ BH() -  42.00 }) # MPH = Main Panel Height = num
-		MPW       <- r({ BW() *   0.75 }) # MPW = Main Panel Width = num
-		PAH       <- r({ if ( PASC() == "Fixed" && !(is.null(MPAH())) ) MPAH() else APAH() }) # PAH = Plot Area Height = num
-		PAHPX0    <- r({ paste0(PAH() -   0, "px") }) # PAH = Plot Area Height in Pixels = num
-		PAHPX1    <- r({ paste0(PAH() - 120, "px") }) # PAH = Plot Area Height in Pixels = num
-		PAHPX1_05 <- r({ paste0((PAH() - 120) * 0.5, "px") }) # PAH = Plot Area Height in Pixels = num
-		PAHPX2    <- r({ paste0(PAH() - 240, "px") }) # PAH = Plot Area Height in Pixels = num
-		PAHPX3    <- r({ paste0(PAH() - 360, "px") }) # PAH = Plot Area Height in Pixels = num
-		PASC      <- r({ II$PASC })  # PASC = Plot Area Size Calculation = char
-		PAW       <- r({ if ( PASC() == "Fixed" && !(is.null(MPAW())) ) MPAW() else APAW() }) # PAW = Plot Area Width = num
-		PAWPX     <- r({ paste0(PAW(), "px") }) # PAW = Plot Area Width in Pixels = num
+		# Model Metadata
+			logsne("Initializing Model Metadata Reactives")
+			MODEL_IDS <- r({
+				if (length(GROUP_IDS()) != 1) {
+					ids <- c()
+				} else if (grepl("admin", GROUP_IDS())) {
+					ids <- db$Models$ID[db$Models$Symbol != ""]
+				} else {
+					mgm <- db$mapping_groups_models
+					ids1 <- mgm$model_id[stringr::str_detect(GROUP_IDS(), pattern=mgm$group_id)]
+					mum <- db$mapping_users_models
+					ids2 <- mum$model_id[mum$user_id == USER_ID()]
+					ids <- unique(c(ids1, ids2))
+				}
+				logsne("Reactive `MODEL_IDS` requested:", dput2(ids))
+				ids
+			})
+			MODEL_SYMBOLS <- r({ db$Models[MODEL_IDS(), "Symbol"] })
+			MODEL_NAMES <- r({ x <- db$Models[MODEL_IDS(), "Name"]; names(x) <- MODEL_SYMBOLS(); x})
+			MODEL_PKGS <- r({ x <- db$Models[MODEL_IDS(), "Package"]; names(x) <- MODEL_SYMBOLS(); x})
 
-		CXX  <- r({ l(XX(), function(X) select(X, where(is.factor))) }) # CXX = Categorical covariate dataframe[dataset] = list(data.frame)
-		CXXR <- l( datasets, function(d) { r({ select(XXR[[d]](),  where(is.factor)) }) } ) # CXXR = Categorical covariate dataframe[dataset] = list(r(data.frame))
-		DD   <- r({ if (!is.null(II$DD)) II$DD else list() })  # DD = Datasets = list(char)
-		FF   <- r({ l(PP(), names) }) # FF = Features[model] = list(vector(char))
-		FFR  <- l( models, function(m) { r({ names(PPR[[m]]()) }) } ) # FFR = Feaures[model] = list(r(vector(char)))
+		# Dataset Metadata
+			logsne("Initializing Dataset Metadata Reactives")
+			DATASET_IDS <- r({
+				if (length(GROUP_IDS()) != 1) {
+					ids <- c()
+				} else if (grepl("admin", GROUP_IDS())) {
+					ids <- db$Datasets$ID[db$Datasets$Symbol != ""]
+				} else {
+					mgd <- db$mapping_groups_datasets
+					ids1 <- mgd$dataset_id[stringr::str_detect(GROUP_IDS(), pattern=mgd$group_id)]
+					mud <- db$mapping_users_datasets
+					ids2 <- mud$dataset_id[mud$user_id == USER_ID()]
+					ids <- unique(c(ids1, ids2))
+				}
+				logsne("Reactive `DATASET_IDS` requested:", dput2(ids))
+				ids
+			})
+			DATASET_SYMBOLS <- r({ db$Datasets[DATASET_IDS(), "Symbol"] })
+			DATASET_NAMES <- r({ x <- db$Datasets[DATASET_IDS(), "Name"]; names(x) <- DATASET_SYMBOLS(); x })
+			DATASET_PKGS <- r({ x <- db$Datasets[DATASET_IDS(), "Package"]; names(x) <- DATASET_SYMBOLS(); x })
+			DATASET_TRANSPOSE <- r({
+				x <- as.logical(db$Datasets[DATASET_IDS(), "Transpose"]); names(x) <- DATASET_SYMBOLS(); x
+			})
 
-		MM   <- r({ if (!is.null(II$MM)) db$Models$Symbol[match(II$MM, db$Models$Name)] else list() })  # MM = Models = list(char)
+		# Browser / Plot Dimensions (alphabetically)
+			logsne("Initializing Browser / Plot Dimensions reactives ...")
+			APAH      <- r({ PAHS[max(which(PAHS < (MPH() - 120)), 1)] }) # APAH = Automatic Plot Area Height = num
+			APAW      <- r({ PAWS[max(which(PAWS < (MPW() -   0)), 1)] }) # APAW = Automatic Plot Area Width = num
+			BH        <- r({ if (is.null(II$dim[2])) 480 else II$dim[2] })  # BH = Browser Height = num
+			BW        <- r({ if (is.null(II$dim[1])) 640 else II$dim[1] })  # BW = Browser Width = num
+			MPAH      <- r({ II$MPAH })  # MPAH = Manual Plot Area Height = num
+			MPAW      <- r({ II$MPAW })  # MPAW = Manual Plot Area Width = num
+			MPH       <- r({ BH() -  42.00 }) # MPH = Main Panel Height = num
+			MPW       <- r({ BW() *   0.75 }) # MPW = Main Panel Width = num
+			PAH       <- r({ if ( PASC() == "Fixed" && !(is.null(MPAH())) ) MPAH() else APAH() }) # PAH = PAHeight = num
+			PAHPX0    <- r({ paste0(PAH() -   0, "px") }) # PAH = Plot Area Height in Pixels = num
+			PAHPX1    <- r({ paste0(PAH() - 120, "px") }) # PAH = Plot Area Height in Pixels = num
+			PAHPX1_05 <- r({ paste0((PAH() - 120) * 0.5, "px") }) # PAH = Plot Area Height in Pixels = num
+			PAHPX2    <- r({ paste0(PAH() - 240, "px") }) # PAH = Plot Area Height in Pixels = num
+			PAHPX3    <- r({ paste0(PAH() - 360, "px") }) # PAH = Plot Area Height in Pixels = num
+			PASC      <- r({ II$PASC })  # PASC = Plot Area Size Calculation = char
+			PAW       <- r({ if ( PASC() == "Fixed" && !(is.null(MPAW())) ) MPAW() else APAW() }) # PAW = PAWidth = num
+			PAWPX     <- r({ paste0(PAW(), "px") }) # PAW = Plot Area Width in Pixels = num
 
-		NXX  <- r({ l(XX(), function(X) select(X, !where(is.factor))) }) # NXX = Numerical covariate dataframe[dataset] = list(data.frame)
-		NXXR <- l( datasets, function(d) { r({ select(XXR[[d]](), !where(is.factor)) }) } ) # NXXR = Numerical covariate dataframe[dataset] = list(r(data.frame))
-		PP   <- r({ l(MM(), function(m) PPR[[m]]()) }) # PP = Parameters[model] = list(num/obj)
-		PPR  <- l( models, function(m) { r({ getdata(m, t="m") }) } ) # PPR = Parameters[model] = list(r(num/obj))
-		SS   <- r({ l(XX(), rownames) }) # SS = Samples[dataset] = list(vector(char))
-		XX   <- r({ l(DD(), function(d) XXR[[d]]() ) }) # XX = covariate dataframe[dataset] = list(data.frame)
-		XXR  <- l( datasets, function(d) { r({ do.call(rename, list(XXR.[[d]](), FEATURE_MAPPINGS[[d]]) ) }) } ) # XXR = covariate dataframe[dataset] = list(r(data.frame))
-		XXR. <- l( datasets, function(d) { r({ getdata(d) }) } ) # XXR = covariate dataframe[dataset] = list(r(data.frame))
-		YYY  <- r({ l(MM(), function(M) { l(DD(), function(D) { YYYR[[M]][[D]]() }) }) }) # YYY = Outcomes[model][dataset] = r(list(list(num)))
-		YYYR <- l( models, function(m) { l(datasets, function(d) { r({ possibly(predict, NULL)(PPR[[m]](), XXR[[d]]()) }) } ) } ) # YYYR = Outcomes[model][dataset] = list(list(reactive(num)))
+		# Model Reactives (one reactive per model)
+			logsne("Initializing Model Reactives (one reactive per model) ...")
+			# FFR: Features[model] = list(r(vector(char)))
+			# PPR: Parameters[model] = list(r(num/obj))
+			FFR <- l( db$Models$Symbol, function(s) { r({ names(PPR[[s]]()) }) } )
+			PPR <- l( db$Models$Symbol, function(s) { r({ getdata(sym=s, typ="model", pkg=MODEL_PKGS()[s]) }) } )
 
+		# Dataset Reactives (one reactive per dataset)
+			logsne("Initializing Dataset Reactives (one reactive per dataset) ...")
+			# XXR.: Covariate_Dataframe[dataset] = list(r(data.frame))
+			# XXR : Covariate_Dataframe[dataset] = list(r(data.frame))
+			# CXXR: Categorical_Covariate_Dataframe[dataset] = list(r(data.frame))
+			# NXXR: Numerical_Covariate_Dataframe[dataset] = list(r(data.frame))
+			XXR. <- l( db$Datasets$Symbol, function(s) {
+				r({ getdata(sym=s, typ="dataset", pkg=DATASET_PKGS()[s], transpose=DATASET_TRANSPOSE()[s]) })
+			} )
+			XXR  <- l( db$Datasets$Symbol, function(s) {
+				r({ do.call(dplyr::rename, list(XXR.[[s]](), globals$FEATURE_MAPPINGS[[s]]) ) })
+			} )
+			CXXR <- l( db$Datasets$Symbol, function(s) {
+				r({ select(XXR[[s]](),  where(is.factor)) })
+			} )
+			NXXR <- l( db$Datasets$Symbol, function(s) {
+				r({ select(XXR[[s]](), !where(is.factor)) })
+			} )
 
+		# Prediction Reactives (one reactive per prediction, i.e. model x dataset)
+			logsne("Initializing Prediction Reactives (one reactive per prediction, i.e. model x dataset) ...")
+			# YYYR = Outcomes[model][dataset] = list(list(reactive(num)))
+			YYYR <- {
+				l( db$Models$Symbol, function(m) {
+					l(db$Datasets$Symbol, function(d) {
+						r({
+							purrr::possibly(.f=predict, otherwise=NULL)(
+								# possibly: wrapped function uses a default value (otherwise) whenever an error occurs
+								PPR[[m]](), XXR[[d]]()
+							)
+						})
+					})
+				})
+			}
 
+		# Model Reactives (one reactive containing a list of all selected models)
+			logsne("Initializing Model Reactives (one reactive containing a list of all selected models) ...")
+			# MM = Models = list(char)
+ 			# PP = Parameters[model] = list(num/obj)
+ 			# FF = Features[model] = list(vector(char))
+			MM <- r({ if (!is.null(II$MM)) db$Models$Symbol[match(II$MM, db$Models$Name)] else list() })
+			PP <- r({ l(MM(), function(m) PPR[[m]]()) })
+			FF <- r({ l(PP(), names) })
+
+		# Dataset Reactives  (one reactive containing a list of all selected datasets)
+			logsne("Initializing Dataset Reactives  (one reactive containing a list of all selected datasets) ...")
+			# DD: Datasets = list(char)
+			# XX: covariate dataframe[dataset] = list(data.frame)
+			# SS: Samples[dataset] = list(vector(char))
+			# CXX: Categorical covariate dataframe[dataset] = list(data.frame)
+			# NXX: Numerical covariate dataframe[dataset] = list(data.frame)
+			DD  <- r({ if (!is.null(II$DD)) II$DD else list() })
+			XX  <- r({ l(DD(), function(d) XXR[[d]]() ) })
+			SS  <- r({ l(XX(), rownames) })
+			CXX <- r({ l(XX(), function(X) select(X, where(is.factor))) })
+			NXX <- r({ l(XX(), function(X) select(X, !where(is.factor))) })
+
+		# Prediction Reactive (one reactive containing a list of all prediction, i.e. models x datasets)
+			logsne("Initializing Prediction Reactive (one reactive containing a list of all prediction, i.e. models x datasets) ...")
+			# YYY: Outcomes[model][dataset] = r(list(list(num)))
+			YYY <- r({ l(MM(), function(M) { l(DD(), function(D) { YYYR[[M]][[D]]() }) }) })
 
 ########## OBSERVERS ###################################################################################################
 	########## On logout_button click ##################################################################################
@@ -259,6 +366,7 @@ imluiServer <- function(input, output, session) {
 		shiny::observeEvent(
 			input$logout_button,
 			{
+				logsne("Event `input$logout_button` observed:", input$logout_button)
 				shinyjs::js$rmcookie()
 				session$reload()
 			}
@@ -270,11 +378,11 @@ imluiServer <- function(input, output, session) {
 			x <- db$Appstate
 			last_url <- x[x$user_id == RV$user$id & x$resource_id == "url", "resource_value"]
 			logsne("Event `RV$user$is_authenticated` triggered ...")
-			logsne("\tconnected user:", dput2(RV$user$id))
-			logsne("\tlast url:", dput2(last_url))
-			logsne("\tcurrent url:", dput2(url)) # this value is changed through the bookmarking stuff!
-			logsne("\tsession start url params:", dput2(url_params)) # this is the true URL obtained from the browser
-			logsne("\tcurrent url search:", dput2(session$clientData$url_search)) # true URL obtained from browser
+			# logsne("\tconnected user:", dput2(RV$user$id))
+			# logsne("\tlast url:", dput2(last_url))
+			# logsne("\tcurrent url:", dput2(url)) # this value is changed through the bookmarking stuff!
+			# logsne("\tsession start url params:", dput2(url_params)) # this is the true URL obtained from the browser
+			# logsne("\tcurrent url search:", dput2(session$clientData$url_search)) # true URL obtained from browser
 			if (grepl("&redirect=false", url_search)) {
 				logsne("\tURL parameter `redirect=false` is present, so do no more redirections")
 			} else if (length(last_url) == 0) {
@@ -418,11 +526,10 @@ imluiServer <- function(input, output, session) {
 					sidebarLayout(
 						sidebarPanel(
 							width=3,
-							style="-ms-flex: 0 0 230px; flex: 0 0 230px; background-color: greenyellow;",
 							# pickerInput("Paper", "Paper", choices=names(db$Papers), multiple=TRUE),
-							# pickerInput("Method", "Method", choices=model_names, multiple=TRUE),
-							pickerInput("MM", "Models", choices=model_names, multiple=TRUE),
-							pickerInput("DD", "Datasets", choices=datasets, multiple=TRUE),
+							# pickerInput("Method", "Method", choices=MODEL_NAMES, multiple=TRUE),
+							pickerInput("MM", "Models", choices=MODEL_NAMES(), multiple=TRUE),
+							pickerInput("DD", "Datasets", choices=DATASET_SYMBOLS(), multiple=TRUE),
 							uiOutput(outputId="PAS_W"),
 							uiOutput(outputId="AI_TO"),
 							# actionButton("CC_B", "Clear Cache"),
@@ -608,7 +715,7 @@ imluiServer <- function(input, output, session) {
 			# logsne("MA_P_T: ")
 			list(
 				fluidRow(column(12, shinycssloaders::withSpinner(plotOutput(outputId="SCP", height=PAHPX2(), width=PAWPX())))),
-				fluidRow(column(3, selectInput(inputId="survPlotM", label="Model", choices=models)))
+				fluidRow(column(3, selectInput(inputId="survPlotM", label="Model", choices=MODEL_SYMBOLS())))
 			)
 		})
 		# OK: Model Analysis - Predictions - Tab
@@ -619,7 +726,7 @@ imluiServer <- function(input, output, session) {
 			} else if (length(DD()) == 0) {
 				div(HTML("Please choose a dataset and model first"))
 			} else {
-				div(fluidRow(column(12, shinycssloaders::withSpinner(plotOutput(outputId="PHP", height=PAHPX1(), width=PAWPX()  )))),
+				div(fluidRow(column(12, shinycssloaders::withSpinner(plotOutput(outputId="PHP", height=PAHPX1(), width=PAWPX() )))),
 					fluidRow(column(2, checkboxInput(inputId="PHP_R", label="Rug", value=TRUE     )),
 							column(2, checkboxInput(inputId="PHP_DL", label="Density", value=TRUE)),
 							column(3, textInput(inputId="PHP_BW", label="Binwidth", value="0.1"  ))))
@@ -630,7 +737,7 @@ imluiServer <- function(input, output, session) {
 			# logsne("MA_P_T: ")
 			list(
 				fluidRow(column(12, shinycssloaders::withSpinner(plotOutput(outputId="SCP", height=PAHPX2(), width=PAWPX())))),
-				fluidRow(column(3, selectInput(inputId="survPlotM", label="Model", choices=models)))
+				fluidRow(column(3, selectInput(inputId="survPlotM", label="Model", choices=MODEL_SYMBOLS())))
 			)
 		})
 		# OK: Model Analysis - Feature Effects - Tab
@@ -660,7 +767,7 @@ imluiServer <- function(input, output, session) {
 					)
 				}
 			} else {
-				div(HTML("Multiple models are not yet implemented"))
+				div(HTML("Usage of multiple models is not yet implemented"))
 			}
 		})
 	########## DA Panel (layer 2 tabs) #################################################################################
@@ -674,7 +781,7 @@ imluiServer <- function(input, output, session) {
 			# User info
 			# logsne("DA_MSDP_T: ")
 			# Row 1 (plot only)
-			MSDP_PO <- column(12, shinycssloaders::withSpinner(plotOutput(outputId="MSDP", inline=TRUE)))
+			MSDP_PO <- column(12, shinycssloaders::withSpinner(plotOutput(outputId="MSDP", height=PAHPX1(), width=PAWPX() )))
 			row1 <- fluidRow(MSDP_PO)
 			# Row 2 (input widgets)
 			MSDP_XT_SI <- column(2, selectInput(inputId="MSDP_XT", label="x-Transformation", choices=xtc, selected=xt))
@@ -737,7 +844,7 @@ imluiServer <- function(input, output, session) {
 	########## OK: App Info - Text-Output ##############################################################################
 		OO$AI_TO <- renderUI({
 			div( HTML( paste0(
-				"<b>App Info</b>",                                    "<br>",
+				"<b>UserID:</b> ",         USER_ID(),                 "<br>",
 				"<b>Version:</b> ",        V,                         "<br>",
 				"<b>Browser Window:</b> ", BW(),  " x ", BH(), " px", "<br>",
 				"<b>Main Panel:</b> ",     MPW(), " x ", MPH()," px", "<br>",
@@ -1030,7 +1137,7 @@ imluiServer <- function(input, output, session) {
 			once = FALSE,
 			session = getDefaultReactiveDomain()
 		)
-	
+
 ########## ON STOP OBSERVERS ###########################################################################################
 	########## onStop: Store appstate in form of URL (called before onSessionEnded) ####################################
 		onStop(

@@ -220,37 +220,36 @@ getCacheDir <- function() {
 	cacheDir
 }
 
-# Like normal get but additionally calls `data` if the object does not exist yet.
-#
-# Also does some initial transformation to make the data compliant to the format expected by imlui functions. Where to
-# look for an object is specified in imlui variable PKG and whether the object should be transposed after initialisation
-# is specified in TRANSPOSE_REQUIRED.
-#
-# Args:
-#   s: string, object to get
-#   t: string, type of object (either "d" for dataset, or "m" for model)
-# Returns:
-#   o: get(s)
-getdata <- function(s, t="d", p="") {
-	if (s %in% datasets) {
-		if (!is.null(s) && !exists(s)) { data(list=s, package=PKG[s]) }
-		o <- get(s)
-		if (any(c("RccSet", "ExpressionSet") %in% class(o))) { o <- Biobase::exprs(o) }
-		if (TRANSPOSE_REQUIRED[s]) { o <- t(o) }
-		o <- as.data.frame(o, stringsAsFactors=TRUE)
-		n <- colnames(o)
-		o[,] <- lapply(seq_along(o), function(i) {
-			if (is.categorical(v=o[,i], n=n[i])) as.factor(o[,i]) else as.numeric(o[,i])
+
+#' @name getdata
+#' @title Get Symbol from Package
+#' @description Like normal get but additionally calls `data` if the object does not exist yet and performs some
+#' initial transformation to make the data compliant to the format expected by imlui functions. 
+#' @param sym: Symbol to get as character.
+#' @param typ: Type of object (either "dataset" for dataset, or "model" for model).
+#' @param pkg: In which package to look for `sym`.
+#' @param transpose: Transpose object after initialisation? (only used if `typ` == "dataset")
+#' @return `obj: get(sym)`
+getdata <- function(sym, typ, pkg, transpose) {
+	if (typ == "dataset") {
+		if (!is.null(sym) && !exists(sym)) { data(list=sym, package=pkg) }
+		obj <- get(sym)
+		if (any(c("RccSet", "ExpressionSet") %in% class(obj))) { obj <- Biobase::exprs(obj) }
+		if (transpose) { obj <- typ(obj) }
+		obj <- as.data.frame(obj, stringsAsFactors=TRUE)
+		n <- colnames(obj)
+		obj[,] <- lapply(seq_along(obj), function(i) {
+			if (is.categorical(v=obj[,i], n=n[i])) as.factor(obj[,i]) else as.numeric(obj[,i])
 		})
-		o
-	} else if (t == "m") {
-		if (!is.null(s) && !exists(s)) {
-			data(list=s, package=PKG[s])
+		obj
+	} else if (typ == "model") {
+		if (!is.null(sym) && !exists(sym)) {
+			data(list=sym, package=pkg[sym])
 		}
-		o <- get(s)
-		o
+		obj <- get(sym)
+		obj
 	} else {
-		stop(glue("Trying to call `getdata(s)`, but `s` ({'s'}) is neither in `datasets` nor `models`."))
+		stop(glue("Param `typ` in `getdata()` must be either 'dataset' or 'model'."))
 	}
 }
 
@@ -374,7 +373,7 @@ help_console <- function(topic, format=c("text", "html", "latex", "Rd"),
 is.categorical <- function(v, n) {
 	levels <- sort(unique(v))
 	threshold <- floor(length(v) * 0.33)
-	if ( (is.numeric(v)) && (length(levels) > threshold) && (!(n %in% CATEGORICALS)) )  {
+	if ( (is.numeric(v)) && (length(levels) > threshold) && (!(n %in% globals$CATEGORICALS)) )  {
 		FALSE
 	} else {
 		TRUE

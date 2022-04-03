@@ -1,18 +1,7 @@
-globals <- list(
-	TABLES = c(
-		"Appstate", "Datasets", "Datatypes", "Mapping_Papers_Datasets",
-		"Mapping_Papers_Models", "Methods", "Models", "Papers", "Platforms",
-		"Samples", "Settings", "mapping_groups_datasets", "mapping_groups_resources",
-		"mapping_users_datasets", "mapping_users_groups", "mapping_users_resources",
-		"mapping_users_sessions", "users"
-	),
-	SODIUM_HASHED = FALSE
-)
-
 runserver <- function(port=8080) {
 	logsne("Function runserver called from process ID:", Sys.getpid())
 	runApp(
-		appDir=app(port=port),
+		appDir=imluiApp(port=port),
 		host="0.0.0.0",
 		port=port,
 		launch.browser=FALSE,
@@ -20,7 +9,8 @@ runserver <- function(port=8080) {
 	)
 }
 
-app <- function(port=8080, config_file=NULL, config_dir=NULL) {
+imluiApp <- function(port=8080, config_file=NULL, config_dir=NULL) {
+	logsne("Starting imluiApp from process ID:", Sys.getpid(), "...")
 	shinyApp(
 		ui=imluiUI, # object like fluidPage or function(request)
 		server=imluiServer, # function(input, output, session)
