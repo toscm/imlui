@@ -1,7 +1,9 @@
 version: "3.9"
 services:
   imlui:
-    build: .
+    build:
+      context: ../../..
+      dockerfile: ./inst/examples/install-and-run-imlui/Dockerfile
     image: toscm/install-and-run-imlui:${IMLUI_VERSION:-latest}
     stdin_open: true # like docker run -i
     tty: true # like docker run -t

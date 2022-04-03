@@ -5,6 +5,8 @@ FROM rocker/shiny-verse:4.1.2
 # Makes dirs: /rocker_scripts/
 # Runs in /rocker_scripts: install_R_source.sh, setup_R.sh, install_shiny_server.sh, install_tidyverse.sh
 # See <https://github.com/rocker-org/rocker-versioned2/tree/master/scripts> for scripts
-RUN Rscript -e "devtools::install_github('toscm/imlui')"
+COPY . /imlui
+RUN Rscript -e "devtools::install('/imlui')"
+RUN rm -rf /imlui
 EXPOSE 8080
 CMD ["Rscript", "-e", "imlui:::runserver()"]

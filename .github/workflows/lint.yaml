@@ -1,5 +1,6 @@
-# Workflow derived from https://github.com/r-lib/actions/tree/master/examples
-# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+# Workflow derived from:
+# https://github.com/r-lib/actions/tree/master/examples and
+# https://github.com/r-lib/lintr/blob/master/.github/workflows/lint.yaml
 on:
   push:
     branches: [main, master]
@@ -10,21 +11,22 @@ name: lint
 
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
 
-      - uses: r-lib/actions/setup-r@v1
+      - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
 
-      - uses: r-lib/actions/setup-r-dependencies@v1
+      - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: lintr
+          extra-packages: r-lib/lintr
 
       - name: Lint
         run: lintr::lint_package()
         shell: Rscript {0}
+  
     timeout-minutes: 30
