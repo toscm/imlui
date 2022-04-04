@@ -260,7 +260,7 @@ getUserCnf <- function(create_from_template_if_missing) {
 		if (file.exists(x))
 			return(x)
 	}
-	# 5. Check ${PWD}/<file-name>
+	# 5. Check ${PWD}/imlui_config.yml
 	x <- norm(getwd(), "imlui_config.yml")
 	if (file.exists(x)) {
 		return(x)

@@ -13,9 +13,9 @@ A user interface (UI) for Interpretable Machine Learning (IML) methods.
 - [Table of Contents](#table-of-contents)
 - [Purpose](#purpose)
 - [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
 - [Documentation](#documentation)
-  - [Important Paths](#important-paths)
-  - [Configuration](#configuration)
   - [Data Storage](#data-storage)
   - [User Authentication](#user-authentication)
   - [User Authorization](#user-authorization)
@@ -25,9 +25,9 @@ A user interface (UI) for Interpretable Machine Learning (IML) methods.
   - [How to merge user accounts?](#how-to-merge-user-accounts)
   - [What happens when the imlui server is started?](#what-happens-when-the-imlui-server-is-started)
   - [What happens when a user connects to the imlui server?](#what-happens-when-a-user-connects-to-the-imlui-server)
-- [Developer Guideline](#developer-guideline)
+- [Developer Guidelines](#developer-guidelines)
   - [Variables Naming Conventions](#variables-naming-conventions)
-- [UI Layout](#ui-layout)
+  - [UI Layout](#ui-layout)
   - [How to submit to CRAN?](#how-to-submit-to-cran)
 
 ## Purpose
@@ -45,28 +45,49 @@ install.packages("imlui")
 devtools::install_github("toscm/imlui")
 ```
 
+## Usage
+
+From commandline:
+
+```bash
+imlui [--help|--version]
+imlui runserver [--port=<port>] [--config-file=<config-file>] [--config-dir=<config-dir>]
+
+From R:
+
+```R
+library(imlui)
+# Option 1 (directly starts a webserver)
+imlui:::runserver(port=8080, config_file=NULL, config_dir=NULL)
+# Option 2 (returns a shinyApp object that can be used with shinyserver)
+imlui:::imluiApp(port=8080, config_file=NULL, config_dir=NULL)
+```
+
+## Configuration
+
+In this documentation the directories `IMLUI_PACKAGE_DIR` and `IMLUI_CONFIG_DIR` are referenced. The path of `IMLUI_PACKAGE_DIR` depends on the system defaults and parameters handed over to `devtools::install()` / `install.packages()` during installation. The path of `IMLUI_CONFIG_DIR` is determined as follows: `IMLUI_CONFIG_DIR` = 
+
+1. `<config-dir>` commandline argument, if specified by user, else
+2. `<$IMLUI_CONFIG_DIR>` environment var, if existing and not empty, else
+3. `<$XDG_CONFIG_HOME>/imlui` environment var, if existing and not empty, else
+4. `<$HOME>/.config/imlui` environment var, if existing and not empty, else
+5. `<$USERPROFILE>/.config/imlui` environment var, if existing and not empty, else
+6. `<current-working-directory>`
+
+All configuration options for imlui live in a single configuration file imlui_config.yml. The following paths are checked for imlui_config.yml
+
+1. `<config-file>`
+2. `$IMLUI_CONFIG_FILE`
+3. `<config-dir>`/imlui_config.yml
+4. `$IMLUI_CONFIG_DIR`/imlui_config.yml
+5. `${PWD}`/imlui_config.yml
+6. `$XDG_CONFIG_HOME`/imlui/imlui_config.yml
+7. `$HOME`/.config/imlui/imlui_config.yml
+8. `$USERPROFILE`/.config/imlui/imlui_config.yml
+
+If multiple `imlui_config.yml` files exist, only the first one is used. If no config exists, [`<IMLUI_PACKAGE_DIR>`/assets/yml/imlui_config.yml](inst/assets/yml/imlui_config.yml) is copied to `<IMLUI_CONFIG_DIR>` and that path is returned.
+
 ## Documentation
-
-### Important Paths
-
-In this documentation the directories `IMLUI_PACKAGE_DIR`, `IMLUI_CONFIG_DIR` and `IMLUI_DATA_DIR` and the file `IMLUI_CONFIG` are referenced. Their exact path depends on the used operating system as well as other environment settings. The algorithm to determine their exact paths is as follows:
-
-TODO
-
-### Configuration
-
-All configuration options for `imlui` live in a single configuration file `imlui_config.yml`. The following directories are checked for `imlui_config.yml`:
-
-1. The directory specified by commandline parameter `--config-file`
-2. The current working directory
-3. $IMLUI_CONFIG_DIR/
-4. $XDG_CONFIG_HOME/imlui/
-5. $HOME/.config/imlui/
-6. $USERPROFILE/.config/imlui/
-
-If multiple `imlui_config.yml` files exist, only the first one is used. If no `imlui.yml` can be found, a new file `imlui_config.yml` is created at the first directory from above, that already exists. Checking for existence is done in the same order as listed above, except for option 2 (the current working directory), which is checked last (and acts as a last fallback, because it always exists).
-
-For an example configuration file see [inst/assets/yml/imlui_config.yml](inst/assets/yml/imlui_config.yml).
 
 ### Data Storage
 
@@ -124,7 +145,7 @@ TODO
 
 TODO
 
-## Developer Guideline
+## Developer Guidelines
 
 ### Variables Naming Conventions
 
@@ -153,7 +174,7 @@ MDY <- Dataframe of Dataframes of prediction values
 |_______|_____________________|_____________|
 ```
 
-## UI Layout
+### UI Layout
 
 ```txt
 x Page
