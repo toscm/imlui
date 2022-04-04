@@ -15,6 +15,13 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/
   - `Removed` for now removed features
   - `Fixed` for bug fixes
   - `Security` in case of vulnerabilities
+  - `Infrastructure` for updates of files not related to the package itself,
+    e.g. .github/workflows/*, README.md, etc. Infrastructure updates increase
+    the patch version.
+
+## [0.1.1] - 2022-04-04
+
+- `Infrastructure`: Added logo and badges.
 
 ## [0.1.0] - 2022-04-03
 

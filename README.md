@@ -1,4 +1,10 @@
-# IML-UI
+# IML-UI <img src="inst/assets/png/imlui_logo.png" align="right" width="100" />
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/toscm/imlui/workflows/R-CMD-check/badge.svg)](https://github.com/toscm/imlui/actions)
+[![Codecov test coverage](https://codecov.io/gh/toscm/imlui/branch/main/graph/badge.svg)](https://app.codecov.io/gh/toscm/imlui?branch=main)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/imlui)](https://cran.r-project.org/package=imlui)
+<!-- badges: end -->
 
 A user interface (UI) for Interpretable Machine Learning (IML) methods.
 
