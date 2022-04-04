@@ -144,7 +144,7 @@ imluiServer <- function(input, output, session) {
 							VALUES ($1, $2, $3, $4, $5)",
 							params=unname(new_user)
 						)
-						db$users[new_user$user_id, names(new_user)] <- new_user
+						db$users[new_user$user_id, names(new_user)] <<- new_user
 					}
 					RV$user$id <- db$users$user_id[which(db$users$github_id == body$id)] # use which to get rid of NAs
 					RV$user$is_authenticated <- TRUE # TODO: remove this. If user$id is NULL, we're not authenticated...
@@ -549,9 +549,11 @@ imluiServer <- function(input, output, session) {
 							tabsetPanel(
 								id = "MP_CS",
 								selected = "Model Analysis",
-								tabPanel("Database Overview", uiOutput(outputId="DBO_T")),
-								tabPanel("Dataset Analysis", uiOutput(outputId="DA_T")),
 								tabPanel("Model Analysis", uiOutput(outputId="MA_T")),
+								tabPanel("Dataset Analysis", uiOutput(outputId="DA_T")),
+								if (grepl("admin", GROUP_IDS())) {
+									tabPanel("Database Overview", uiOutput(outputId="DBO_T"))
+								}
 								# , tabPanel("Session Info", verbatimTextOutput(outputId="SI_TO"))
 							)
 						)
@@ -1149,14 +1151,18 @@ imluiServer <- function(input, output, session) {
 					logsne("\tuser_id:", user_id)
 					logsne("\tresource_id:", "url")
 					logsne("\tresource_value:", url)
-					idx <- which(db$Appstate$user_id == user_id && db$Appstate$resource_id == "url")
+					idx <- which(db$Appstate$user_id == user_id & db$Appstate$resource_id == "url")
 					if (length(idx) == 0) {
+						logsne("Calling: INSERT INTO Appstate (user_id, resource_id, resource_value) VALUES (?, ?, ?)")
+						logsne("With params:", dput2(list(user_id, "url", url)))
 						db_send("INSERT INTO Appstate
 								(user_id, resource_id, resource_value)
 								VALUES (?, ?, ?)",
 								params=list(user_id, "url", url)
 						)
 					} else {
+						logsne("Calling: UPDATE Appstate SET resource_value = ? WHERE user_id = ? AND resource_id = ?")
+						logsne("With params:", dput2(list(url, user_id, "url")))
 						db_send("UPDATE Appstate
 								SET resource_value = ?
 								WHERE user_id = ? AND resource_id = ?",

@@ -19,6 +19,11 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/
     e.g. .github/workflows/*, README.md, etc. Infrastructure updates increase
     the patch version.
 
+## [0.1.2] - 2022-04-04
+
+- `Fixed`: Cleared `imlui_db.sqlite`
+- `Added`: Database Overview is now hidden for non-admins
+
 ## [0.1.1] - 2022-04-04
 
 - `Infrastructure`: Added logo and badges.
