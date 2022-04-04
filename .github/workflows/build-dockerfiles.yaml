@@ -27,6 +27,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
+          no-cache: true
           push: true
           file: inst/examples/install-and-run-imlui/Dockerfile
           tags: toscm/install-and-run-imlui:${{steps.version.outputs.tag}},toscm/install-and-run-imlui:latest
@@ -34,6 +35,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
+          no-cache: true
           push: true
           file: inst/examples/install-and-run-imlui-behind-shinyserver/Dockerfile
           tags: toscm/install-and-run-imlui-behind-shinyserver:${{steps.version.outputs.tag}},toscm/install-and-run-imlui-behind-shinyserver:latest

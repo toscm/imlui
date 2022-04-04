@@ -1,5 +1,7 @@
 FROM toscm/install-and-run-imlui:latest
-# Usage: docker compose {build|up|push}
+# Usage:
+#   docker build -t toscm/install-and-run-imlui-behind-shinyserver:latest --no-cache inst/examples/install-and-run-imlui-behind-shinyserver
+#   docker run -it -p 3838:3838 toscm/install-and-run-imlui-behind-shinyserver:latest
 COPY \
     /inst/examples/install-and-run-imlui-behind-shinyserver/shiny-server.conf \
     /etc/shiny-server/shiny-server.conf
