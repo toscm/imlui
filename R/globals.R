@@ -3,7 +3,6 @@ if (FALSE) {
 	options(warn=2)
 }
 if (TRUE) {
-	shiny::addResourcePath(prefix="imlui/assets", system.file("assets", package="imlui"))
 	globals <- list(
 		TABLES = c(
 			"Appstate", "Datasets", "Datatypes", "Mapping_Papers_Datasets", "Mapping_Papers_Models", "Methods", 

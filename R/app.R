@@ -17,8 +17,7 @@ imluiApp <- function(port=8080, config_file=NULL, config_dir=NULL) {
 		onStart=function() { # function()
 			.onStart(port=port, config_file=config_file, config_dir=config_dir)
 			shiny::onStop(.onStop)
-		}
-		,
+		},
 		options=list( # list(port, launch.browser, host, quiet, display.mode, test.mode)
 			port=port,
 			launch.browser=FALSE,
@@ -34,6 +33,7 @@ imluiApp <- function(port=8080, config_file=NULL, config_dir=NULL) {
 
 .onStart <- function(port, config_file, config_dir) {
 	logsne("Starting shinyApp from process ID:", Sys.getpid(), "...")
+	shiny::addResourcePath(prefix="imlui/assets", system.file("assets", package="imlui"))
 	read_imlui_config() # sets options("imlui.config.dbms.{type|hostname|port|database|username|password}")
 	imlui_db <- connect_imlui_db(init_if_empty=TRUE) # call here before server starts to initialize if required
 	DBI::dbDisconnect(imlui_db)

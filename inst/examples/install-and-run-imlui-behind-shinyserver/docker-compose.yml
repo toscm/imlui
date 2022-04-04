@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  imlui-behind-shinyserver:
+    build:
+      context: ../../..
+      dockerfile: ./inst/examples/install-and-run-imlui-behind-shinyserver/Dockerfile
+    image: toscm/install-and-run-imlui-behind-shinyserver:latest
+    stdin_open: true
+    tty: true
+    ports:
+      - "3838:3838"

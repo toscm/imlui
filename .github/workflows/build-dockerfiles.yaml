@@ -23,10 +23,17 @@ jobs:
         id: version
         run: |
           echo ::set-output name=tag::$(cat DESCRIPTION | grep 'Version: .*' | sed 's/Version: //g')
-      - name: Build and push
+      - name: Build and push install-and-run-imlu
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
           file: inst/examples/install-and-run-imlui/Dockerfile
-          tags: toscm/install-and-run-imlui:latest,toscm/install-and-run-imlui:${{steps.version.outputs.tag}}
+          tags: toscm/install-and-run-imlui:${{steps.version.outputs.tag}},toscm/install-and-run-imlui:latest
+      - name: Build and push install-and-run-imlui-behind-shinyserver
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          file: inst/examples/install-and-run-imlui-behind-shinyserver/Dockerfile
+          tags: toscm/install-and-run-imlui-behind-shinyserver:${{steps.version.outputs.tag}},toscm/install-and-run-imlui-behind-shinyserver:latest
