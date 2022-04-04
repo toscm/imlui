@@ -52,6 +52,7 @@ From commandline:
 ```bash
 imlui [--help|--version]
 imlui runserver [--port=<port>] [--config-file=<config-file>] [--config-dir=<config-dir>]
+```
 
 From R:
 
@@ -65,7 +66,7 @@ imlui:::imluiApp(port=8080, config_file=NULL, config_dir=NULL)
 
 ## Configuration
 
-In this documentation the directories `IMLUI_PACKAGE_DIR` and `IMLUI_CONFIG_DIR` are referenced. The path of `IMLUI_PACKAGE_DIR` depends on the system defaults and parameters handed over to `devtools::install()` / `install.packages()` during installation. The path of `IMLUI_CONFIG_DIR` is determined as follows: `IMLUI_CONFIG_DIR` = 
+In this documentation the directories `IMLUI_PACKAGE_DIR` and `IMLUI_CONFIG_DIR` are referenced. The path of `IMLUI_PACKAGE_DIR` depends on the system defaults and parameters handed over to `devtools::install()` / `install.packages()` during installation. The path of `IMLUI_CONFIG_DIR` is determined as follows: `IMLUI_CONFIG_DIR` =
 
 1. `<config-dir>` commandline argument, if specified by user, else
 2. `<$IMLUI_CONFIG_DIR>` environment var, if existing and not empty, else
@@ -74,7 +75,7 @@ In this documentation the directories `IMLUI_PACKAGE_DIR` and `IMLUI_CONFIG_DIR`
 5. `<$USERPROFILE>/.config/imlui` environment var, if existing and not empty, else
 6. `<current-working-directory>`
 
-All configuration options for imlui live in a single configuration file imlui_config.yml. The following paths are checked for imlui_config.yml
+All configuration options for imlui live in a single yaml configuration file `IMLUI_CONFIG_FILE`. The following paths are checked for such a file:
 
 1. `<config-file>`
 2. `$IMLUI_CONFIG_FILE`
@@ -85,15 +86,15 @@ All configuration options for imlui live in a single configuration file imlui_co
 7. `$HOME`/.config/imlui/imlui_config.yml
 8. `$USERPROFILE`/.config/imlui/imlui_config.yml
 
-If multiple `imlui_config.yml` files exist, only the first one is used. If no config exists, [`<IMLUI_PACKAGE_DIR>`/assets/yml/imlui_config.yml](inst/assets/yml/imlui_config.yml) is copied to `<IMLUI_CONFIG_DIR>` and that path is returned.
+If multiple config files exist, only the first one is used. If no config file exists, [`<IMLUI_PACKAGE_DIR>`/assets/yml/imlui_config.yml](inst/assets/yml/imlui_config.yml) is copied to `<IMLUI_CONFIG_DIR>` and that path is returned.
 
 ## Documentation
 
 ### Data Storage
 
-Imlui uses a relational database system for storing all information except raw datasets. Supported database types are [PostgreSQL](https://www.postgresql.org/) (recommended for multi user instances) and [SQLite](https://www.sqlite.org/index.html) (default for local usage). The corresponding database type, hostname, port, username and password must be specified in file `imlui_config.yml`, section `database` (see [Configuration](#configuration) for details). If no `database` configuration is provided, a new SQLite database is created at `<IMLUI_DATA_DIR>/imlui_database.sqlite`.
+Imlui uses a relational database system for storing all information except raw datasets. Supported database types are [PostgreSQL](https://www.postgresql.org/) (recommended for multi user instances) and [SQLite](https://www.sqlite.org/index.html) (default for local usage). The corresponding database type, hostname, port, username and password must be specified in `<IMLUI_CONFIG_FILE>`, section `database` (see [Configuration](#configuration) for details). If no `database` configuration is provided, a new SQLite database is created at `<IMLUI_DATA_DIR>/imlui_database.sqlite`.
 
-For storing raw datasets, imlui uses a [datatomb](https://gitlab.spang-lab.de/containers/datatomb/) server like <data.spang-lab.de>. The server URL, server port and the access token to be used for the connection must be specified in file `imlui_config.yml` section `datatomb_server` . If no `datatomb_server` configuration is provided, a new datatomb server is started at `localhost:4141`.
+For storing raw datasets, imlui uses a [datatomb](https://gitlab.spang-lab.de/containers/datatomb/) server like <data.spang-lab.de>. The server URL, server port and the access token to be used for the connection must be specified in `<IMLUI_CONFIG_FILE>` section `datatomb_server` . If no `datatomb_server` configuration is provided, a new datatomb server is started at `localhost:4141`.
 
 ### User Authentication
 
