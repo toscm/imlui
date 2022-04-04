@@ -19,6 +19,10 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/
     e.g. .github/workflows/*, README.md, etc. Infrastructure updates increase
     the patch version.
 
+## [0.1.4] - 2022-04-04
+
+- `Fixed`: install-and-run-behind-shinyserver Dockerfile now also installs fresh from Github
+
 ## [0.1.3] - 2022-04-04
 
 - `Fixed`: added no-cache to Dockerfile Build Action
