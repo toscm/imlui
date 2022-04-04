@@ -21,7 +21,8 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Get Version Tag
         id: version
-        run: echo ::set-output name=tag::$(cat DESCRIPTION | grep 'Version: .*' | sed 's/Version: //g')
+        run: |
+          echo ::set-output name=tag::$(cat DESCRIPTION | grep 'Version: .*' | sed 's/Version: //g')
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
