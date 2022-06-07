@@ -26,9 +26,12 @@ A user interface (UI) for Interpretable Machine Learning (IML) methods.
   - [What happens when the imlui server is started?](#what-happens-when-the-imlui-server-is-started)
   - [What happens when a user connects to the imlui server?](#what-happens-when-a-user-connects-to-the-imlui-server)
 - [Developer Guidelines](#developer-guidelines)
-  - [Variables Naming Conventions](#variables-naming-conventions)
+  - [Variable Naming Conventions](#variable-naming-conventions)
+  - [UI Principles](#ui-principles)
   - [UI Layout](#ui-layout)
   - [How to submit to CRAN?](#how-to-submit-to-cran)
+  - [Idea: high performance Architecture](#idea-high-performance-architecture)
+  - [Idea: Improve current architecture](#idea-improve-current-architecture)
 
 ## Purpose
 
@@ -113,9 +116,9 @@ Imlui can be configured to use an external identity provider such as [auth.spang
 
 1. All groups `G={g1, g2, ...}` assigned to `uidX` are retrieved from `authY.com`
 2. New rows
-   * `group_id=g1, user_id=uidX, granted_by=authY.com`
-   * `group_id=g2, user_id=uidX, granted_by=authY.com`
-   * `...`
+   + `group_id=g1, user_id=uidX, granted_by=authY.com`
+   + `group_id=g2, user_id=uidX, granted_by=authY.com`
+   + `...`
    are added to table `groups`, if they don't exist yet.
 3. All rows matching `group_id=.*, user_id=uidX, granted_by=authY.com` are retrieved from table `users`. If any `group_id` is found, that is no longer an element of `G`, those entries are removed.
 
@@ -148,7 +151,7 @@ TODO
 
 ## Developer Guidelines
 
-### Variables Naming Conventions
+### Variable Naming Conventions
 
 ```txt
 M  <- Vector of Model Names                         [lamis,             tric,            ...]
@@ -174,49 +177,103 @@ MDY <- Dataframe of Dataframes of prediction values
 |       | |_________________| | |_________| |
 |_______|_____________________|_____________|
 ```
+### UI Principles
+
++ **Dont' make me think**: the webapp should be self-explanatory and intuitive to use, i.e. users should understand the purpose of the app and each component it it without having to think about it.
++ **Names should simple and concise**.
++ **Clarity trumps consistency**.
++ **Make it obvious what's clickable**: everything that can be clicked must be clearly recognizable as such.
++ The site must work on all common devices, i.e. Smartphones, Tablets and Monitors.
++ **Keep the noise down**: remove (or hide) ALL unnecessary information from a page. Omit needless words.
++ **Format text to support scanning**:
+  + Use plenty of heading
+  + Format heading correctly, i.e. huge size differences and much closer to the section they introduce than to the section they follow.
+  + Avoid long paragraphs (known as "wall of words")
+  + Use listings wherever possible
+  + Highlight key terms (sparingly)
++ **Add help Icons to every (plain text) user Input**
++ **Prefer examples over theoretic explanations**
++ The Homepage must answer the following four questions:
+  + What is this site?
+  + What can I do here?
+  + What do they have here?
+  + Why should I be here and not somewhere else?
+  + Where to I start?
+  Ideas:
+    + Carousel of DLBCL, machine learning, etc. and overlay text "Predict, Compare, Explain - use machine learning methods to make prediction for DLBLC. Accompanied with intuitive visualizations and explanations". Figure caption should contain links to "Predict", "Compare", "Explain".
+    + Page Header with
+      + a tagline (h1): "Making machine learning interpretable"
+      + a welcome blurb (h2), i.e., a terse description of the site, displayed in a prominent block on the Home page: "IMLUI provides a grafical user interface to apply and explain machine learning methods to diffuse large b-cell (DLBCL) data"
+      + learn more content, i.e., multiple images or videos with short texts like
+        + VID: "[Get Stared](lnk). Short introduction video explaining how to get the most out of the IML UI for DLBCL."
+        + IMG: "[Compare](link) multiple models on the same set of samples."
+        + IMG: "[Predict](lnk) new samples. Choose from more than 15 different models published from 1998-2022."
+
+The above principles are inspired by / derived from the direct citations of the book "Don't make me think" from Krug, 2014, 3rd edition:
+
++ *[...] as far as is humanly possible, when I look at a Web page it should be self-evident. Obvious. Self-explanatory. I should be able to "get it" - what it is and how to use it - without expending any effort thinking about it.*
++ Things to avoid are:
+  - *cute or clever names, marketing-induced names, company-specific names, and unfamiliar technical names.*
+  - *links and buttons that aren't obviously clickable*
++ *The fact that the people who built the site didn't care enough to make things obvious - and easy - can erode our confidence in the site and the organization behind it.*
++ *We don't read pages. We scan them.*
++ *We don't make optimal choices. We satisfice.* (I.e., *In reality, [...] we don't choose the best option - we choose the first reasonable option [...].)
++ *Faced with the fact that your users are whizzing by, there are some important things you can do to make sure they see and understand as much of what they need to know - and of what you want them to know - as possible:*
+  - *Take advantage of conventions*
+    - *Users expect the logo identifying the site to be in the top-left corner [...] and the primary navigation to be across the top or down the left side*.
+    - *Many elements have a standardized appearance, like the icon that tells you it's a link to a video, the search icon, and the social networking sharing options.*
+  - *Create effective visual hierarchies*
+  - *Break pages up into clearly defined areas*
+  - *Make it obvious what's clickable*
+  - *Eliminate distractions*
+  - *Format content to support scanning*
++ *Eye-tracking studies of Web page scanning suggest that users decide very quickly in their initial glances which parts of the page are likely to have useful information and then rarely look at the other parts - almost as though they weren't there. (Banner blindness - the ability of users to completely ignore areas they think will contain ads - is just the extreme case.)*
+
+CONTINUE READING ON PAGE 30
 
 ### UI Layout
 
 ```txt
-x Page
-  x Sidebar
-    i Models Menu (MM)
-    i Datasets Menu (DD)
-    o Plot Area Size Widget (PAS_W)
-    o App Info Text Output (AI_TO)
-    i Clear Cache Button (CC_B)
-    i Redraw Button (R_B)
-  x+ Mainpanel Tab
-    o+ Database Overview Tab (DBO_T)
-      o Papers (DBO_PA_T)
-      o Models (DBO_MO_T)
-      o Datasets (DBO_DS_T)
-      o Settings (DBO_SE_T)
-      o Samples (DBO_SA_T)
-      o Datatypes (DBO_DT_T)
-      o Methods (DBO_ME_T)
-      o Platforms (DBO_PF_T)
-    o+ Data Analysis Tab (DA_T)
-      o Descriptions Tab (DA_DD_TO)  [1, 4]
-      o MSD-Plot Tab (DA_MSDP_T) [2]
-      o ***
-    o+ Model Analysis Tab (MA_T)
-      o Descriptions Tab (MA_MD_TO) [1]
-      o Predictions Tab (MA_MP_T) [5]
-      o Survival Curves Tab (MA_SC_T)
-      o Feature Effect Plot Tab (MA_FE_T) [6]
-    o Session Info Tab (SI_TO) [1]
+x Web App (web_app, WA)
+  x Home Page (home_page, HP)
+    x Sidebar (side_bar, SB)
+      i Models Menu (models_menu, MM)
+      i Datasets Menu (datasets_menu, DD)
+      o Plot Area Size Widget (plot_area_size_widget, PAS_W)
+      o App Info Text Output (app_info_text_output, AI_TO)
+      i Clear Cache Button (clear_cache_button, CC_B)
+      i Redraw Button (redraw_button, R_B)
+    xc Mainpanel Tab (main_panel, MP)
+      oc Settings Tab (settings_tab, S_T)
+        o Papers (papers_tab, S_PA_T)
+        o Models (models_tab, S_MO_T)
+        o Datasets (datasets_tab, S_DS_T)
+        o Settings (settings_tab, S_SE_T)
+        o Samples (samples_tab, S_SA_T)
+        o Datatypes (datatypes_tab, S_DT_T)
+        o Methods (methods_tab, S_ME_T)
+        o Platforms (platforms_tab, S_PF_T)
+      oc Data Analysis Tab (data_analysis_tab, DA_T)
+        o Descriptions Tab (descriptions_tab, DA_DD_TO)  [1, 4]
+        o MSD Plot Tab (msd-plot_tab, DA_MSDP_T) [2]
+      oc Model Analysis Tab (model_analysis_tab, MA_T)
+        o Descriptions Tab (descriptions_tab, MA_MD_TO) [1]
+        o Predictions Tab (predictions_tab, MA_MP_T) [5]
+        o Survival Curves Tab (survival_curves_tab, MA_SC_T)
+        o Feature Effect Plot Tab (feature_effect_plot_tab, MA_FE_T) [6]
+      o Session Info Tab (session_info_tab, SI_TO) [1]
+  x Login Page (login_page, LP)
 ```
 
-* x: Neither input nor output ID
-* i: Displays and provides a input ID
-* o: Displays and requires a output ID
-* +: Current Selection of subtabs is given through `<outputID>_CS`, e.g. `MP_CS`, `DBO_T_CS`, `DA_T_CS`, `MA_T_CS`
-* [1] TODO: Currently implemented as Text Output. Make similar to other tabs.
-* [2] TODO: Renamed to 'Numerical Features'
-* [4] TODO: Rename to Overview. Add options to display as description or corner matrix with dynamic 'n'.
-* [5] TODO: Rename ID to MA_P_T
-* [6] TODO: Renamed ID to MA_FEP_T
++ x: Neither input nor output ID
++ i: Displays and provides a input ID
++ o: Displays and requires a output ID
++ c: Current Selection of subtabs is given through `<outputID>_CS`, e.g. `MP_CS`, `S_T_CS`, `DA_T_CS`, `MA_T_CS`
++ [1] TODO: Currently implemented as Text Output. Make similar to other tabs.
++ [2] TODO: Renamed to 'Numerical Features'
++ [4] TODO: Rename to Overview. Add options to display as description or corner matrix with dynamic 'n'.
++ [5] TODO: Rename ID to MA_P_T
++ [6] TODO: Renamed ID to MA_FEP_T
 
 ### How to submit to CRAN?
 
@@ -234,3 +291,24 @@ devtools::spell_check() # Check spelling of package
 devtools::release() # Builds, tests and submits the package to CRAN.
 # Manual submission can be done at: https://cran.r-project.org/submit.html
 ```
+
+### Idea: high performance Architecture
+
+1. Seperate UI `imlui-js` with [webhooks](https://zapier.com/blog/what-are-webhooks/) programmed in React Tailwind or similar and hosted via `webpack-cli serve --mode=production` or similar, implementing the following logic:
+   1. If neither session-token-cookie nor access-token-cookie is present send `GET start-r-session` to backend server and display "Connecting to IMLUI Server ..." or something
+   2. After session-token is retrieved, store session-token as cookie. Now user can interact with the API as unauthenticaed user or he can authenticate himself via `GET access-token ? username=x & password=y`. In that case
+      1. The retrieved access-token is stored as cookie.
+      2. The latest appstate of that user (URL encoded) is retrieved with `GET app-state`
+      3. The private plus the personal `session-process`.
+      4. TO BE CONTINUED
+2. Seperate backend `imlservr`, programmed with R `plumber`, `breakr` or [fiery](https://fiery.data-imaginist.com/index.html) OR seperate backend `imlservjs` programmed in Type-/Javascript, implementing the following API:
+   1. `GET start-session"` --> starts new R process which listens on `"https://.../<session-token>"` for commands and returns session-token (to be stored as cookie)
+   2. `GET stop-session ? session-token=<session-token>"` --> stops the R process (automatically called when browser session, i.e., tab, is closed)
+   3. `GET login ? username=asdf & password=qwer"` --> returns access_token (to be stored as cookie)
+   4. `GET start-private-session?session-token=<session-token>"` --> stops the R process (automatically called when browser session, i.e., tab, is closed)
+   5. `GET login?username=asdf&password=qwer"` --> returns access_token (to be stored as cookie)
+   6. `GET get-fep?session-token=<session-token>&access-token=<asdf>&"`
+
+### Idea: Improve current architecture
+
+Create separate environments for process data, e.g. `pdat` and session data, e.g. `sdat`. Then replace list of reactives for datasets with normal functions. The normal function stores the dataset in `pdat` if not yet available and then returns it. If already available, it directly returns it. Furthermore it stores the timestamp of the last access to that dataset. When a session is closed, datasets that haven't been used for 7 days or longer get deleted.

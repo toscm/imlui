@@ -33,7 +33,7 @@ library("htmltools")
 					),
 					tabsetPanel(
 						id = "MP_CS",
-						tabPanel("Database Overview", div("DBO_T")),
+						tabPanel("Database Overview", div("S_T")),
 						tabPanel("Dataset Analysis", div("DA_T")),
 						tabPanel("Model Analysis", div("MA_T"))
 					)

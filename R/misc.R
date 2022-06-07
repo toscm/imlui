@@ -48,74 +48,6 @@ collapse_ <- function(x)   paste(x, collapse="_")
 collapseCS <- function(x)  paste(x, collapse=", ")  # TODO: remove `s` argument!
 collapseNL <- function(x)  paste(x, collapse="\n")
 
-connect_imlui_db <- function(init_if_empty=FALSE) {
-	# Define Variables
-		dbms.type <- options("imlui.config.dbms.type")[[1]]
-		dbms.filepath <- options("imlui.config.dbms.filepath")[[1]]
-		dbms.hostname <- options("imlui.config.dbms.hostname")[[1]]
-		dbms.port <- options("imlui.config.dbms.port")[[1]]
-		dbms.database <- options("imlui.config.dbms.database")[[1]]
-		dbms.username <- options("imlui.config.dbms.username")[[1]]
-		dbms.password <- options("imlui.config.dbms.password")[[1]]
-		default_imlui_db.sqlite <- system.file("assets/sqlite/imlui_db.sqlite", package="imlui")
-		creation_of_default_users_required <- FALSE
-	# Check Variables
-		if (is.null(dbms.type)) {
-			stop("Make sure to call `read_imlui_config()` before calling `connect_imlui_db()`")
-		} else if (!(dbms.type %in% c("sqlite", "postgres"))) {
-			stop("imlui_config.yml/dbms/type must be either 'sqlite' or 'postgres', not", dbms.type)
-		}
-	# SQLite case
-		if (dbms.type == "sqlite") {
-			if (init_if_empty) {
-				logsne("Checking database", dbms.filepath, "...")
-				if (!file.exists(dbms.filepath)) {
-					catsne("Database does not exist yet:")
-					catsne("Copying", default_imlui_db.sqlite, "to", dbms.filepath, "...")
-					file.copy(default_imlui_db.sqlite, dbms.filepath)
-					creation_of_default_users_required <- TRUE
-				}
-			}
-			imlui_db <- DBI::dbConnect(RSQLite::SQLite(), dbms.filepath)
-	# Postgres case
-		} else if (dbms.type == "postgres") {
-			imlui_db <- DBI::dbConnect(
-				drv = RPostgres::Postgres(), host = dbms.hostname, port = dbms.port,
-				dbname = dbms.database, user = dbms.username, password = dbms.password
-			)
-			if (init_if_empty) {
-				log0ne("Checking database ", dbms.hostname, ":", dbms.port, "/", dbms.database, "...")
-				if (length(DBI::dbListTables(imlui_db)) == 0) {
-					log0ne("Found no tables in `", dbms.hostname, ":", dbms.port, "/", dbms.database, "`:")
-					log0ne("Initializing with default values...")
-					local({
-						default_imlui_db <- DBI::dbConnect(RSQLite::SQLite(), default_imlui_db.sqlite)
-						on.exit(DBI::dbDisconnect(default_imlui_db))
-						for (tbl in DBI::dbListTables(default_imlui_db)) {
-							DBI::dbWriteTable(imlui_db, tbl, value=DBI::dbReadTable(default_imlui_db, tbl))
-						}
-					})
-					creation_of_default_users_required <- TRUE
-				}
-			}
-		}
-	# Create initial users if required
-		if (creation_of_default_users_required) {
-			if (FALSE) { # TODO: Temporarily disabled, for now (development phase) keep pass1 and pass2 as fixed pws
-				logsne("Generating initial users (please store them in a secure place) ...")
-				initial_users_df <- data.frame(
-					user_id = c("admin", "testuser"),
-					password = c("pass1", "pass2"),
-					group_ids = c("admin", "standard"),
-					display_name = c("Admin", "Test User")
-				)
-				PRINT(initial_users_df)
-				DBI::dbWriteTable(conn=imlui_db, name="users", value=initial_users_df, overwrite=TRUE)
-			}
-		}
-	return(imlui_db)
-}
-
 # Like head and tail, but returns `n` rows/cols from each side of `x` (i.e. the corners of `x`)
 corn <- function(x, n=2L) {
 	if(is.vector(x)) return(x)
@@ -524,7 +456,7 @@ readSysCnf <- function() {
 	read.config(file=getSysCnf(), file.type = "json")
 }
 
-read_imlui_config <- function(create_from_template_if_missing=TRUE) {
+util__read_imlui_config <- function(create_from_template_if_missing=TRUE) {
 	IMLUI_CONFIG_DIR <- toscutil::config_dir("imlui", env_var=Sys.getenv("IMLUI_CONFIG_DIR"), create=TRUE, sep="/")
 	imlui_config.yml <- getUserCnf(create_from_template_if_missing=create_from_template_if_missing)
 	logsne("Reading ", imlui_config.yml, "...")

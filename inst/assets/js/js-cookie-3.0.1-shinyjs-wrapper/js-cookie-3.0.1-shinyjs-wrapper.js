@@ -9,8 +9,7 @@ shinyjs.getcookie = function (params) {
 	if (typeof cookie !== 'undefined') {
 		Shiny.setInputValue('login_jscookie', cookie)
 	} else {
-		var cookie = ''
-		Shiny.setInputValue('login_jscookie', cookie)
+		Shiny.setInputValue('login_jscookie', '')
 	}
 }
 

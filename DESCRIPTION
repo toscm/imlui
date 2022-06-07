@@ -5,7 +5,7 @@ Authors@R:
     person(given = "Tobias",
            family = "Schmidt",
            role = c("aut", "cre"),
-           email = "tobias2.schmidt@ukr.de")
+           email = "tobias.schmidt331@gmail.com")
 Description: Provides a grafical user interface (GUI) and a commandline interface (CLI) to interactively explore interpretable machine learning (IML) methods.
 License: MIT + file LICENSE
 Encoding: UTF-8
