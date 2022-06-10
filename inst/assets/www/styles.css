@@ -1,0 +1,17 @@
+div[class="container"] {
+    border-style: solid;
+    border-color: orange;
+    border-width: 2px;
+}
+
+div[class="row"] {
+    border-style: dashed;
+    border-color: blue;
+    border-width: 1px;
+}
+
+div[class*="col"] {
+    border-style: dotted;
+    border-color: red;
+    border-width: 1px;
+}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>IML-UI</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="shared/shiny.min.css" rel="stylesheet" />
+    <link href="imlui-assets-0.1.4/css/styles.css" rel="stylesheet" />
+    <link href="shared/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="shared/bootstrap/accessibility/css/bootstrap-accessibility.min.css" rel="stylesheet" />
+    <link href="shinycssloaders-assets/spinner.css" rel="stylesheet" />
+    <link href="shinycssloaders-assets/css-loaders.css" rel="stylesheet" />
+
+    <script
+        type="application/shiny-singletons">add739c82ab207ed2c80be4b7e4b181525eb7a75,f756633fccc17f84dff1d8dbfc0a750cc0a8ff65,fc993cee573540ff31da45e9f921c83f789af40c,3891ac171834ed25f436995ba40a47edd74e5169,45534f2c59c7069db5da7f5118dc12c792e86de5</script>
+    <script
+        type="application/html-dependencies">jquery[3.6.0];shiny-css[1.7.1];shiny-javascript[1.7.1];imlui-assets[0.1.4];bootstrap[3.4.1]</script>
+    <script src="shared/jquery.min.js"></script>
+    <script src="shared/shiny.min.js"></script>
+    <script src="imlui-assets-0.1.4/js/js-cookie-3.0.1/js.cookie.min.js"></script>
+    <script src="imlui-assets-0.1.4/js/window-dimensions-1.0.0/window-dimensions-1.0.0.js"></script>
+    <script src="shared/bootstrap/js/bootstrap.min.js"></script>
+    <script src="shared/bootstrap/accessibility/js/bootstrap-accessibility.min.js"></script>
+    <script src="shinyjs/shinyjs-default-funcs.js"></script>
+    <script src="shinycssloaders-assets/spinner.js"></script>
+
+    <style>
+        .shinyjs-hide {
+            display: none !important;
+        }
+
+        #spinner-8bfa8a10986c94c3af7fcc21fdaf8f53,
+        #spinner-8bfa8a10986c94c3af7fcc21fdaf8f53:before,
+        #spinner-8bfa8a10986c94c3af7fcc21fdaf8f53:after {
+            background: #0275D8;
+        }
+
+        #spinner-8bfa8a10986c94c3af7fcc21fdaf8f53 {
+            color: #0275D8;
+        }
+
+        #spinner-8bfa8a10986c94c3af7fcc21fdaf8f53 {
+            font-size: 8px;
+        }
+    </style>
+    <script>
+        shinyjs.debug = false;
+        Shiny.addCustomMessageHandler('shinyjs-show', function (params) { shinyjs.debugMessage('shinyjs: calling function "show" with parameters:'); shinyjs.debugMessage(params); shinyjs.show(params); });
+        Shiny.addCustomMessageHandler('shinyjs-hide', function (params) { shinyjs.debugMessage('shinyjs: calling function "hide" with parameters:'); shinyjs.debugMessage(params); shinyjs.hide(params); });
+        Shiny.addCustomMessageHandler('shinyjs-toggle', function (params) { shinyjs.debugMessage('shinyjs: calling function "toggle" with parameters:'); shinyjs.debugMessage(params); shinyjs.toggle(params); });
+        Shiny.addCustomMessageHandler('shinyjs-enable', function (params) { shinyjs.debugMessage('shinyjs: calling function "enable" with parameters:'); shinyjs.debugMessage(params); shinyjs.enable(params); });
+        Shiny.addCustomMessageHandler('shinyjs-disable', function (params) { shinyjs.debugMessage('shinyjs: calling function "disable" with parameters:'); shinyjs.debugMessage(params); shinyjs.disable(params); });
+        Shiny.addCustomMessageHandler('shinyjs-toggleState', function (params) { shinyjs.debugMessage('shinyjs: calling function "toggleState" with parameters:'); shinyjs.debugMessage(params); shinyjs.toggleState(params); });
+        Shiny.addCustomMessageHandler('shinyjs-addClass', function (params) { shinyjs.debugMessage('shinyjs: calling function "addClass" with parameters:'); shinyjs.debugMessage(params); shinyjs.addClass(params); });
+        Shiny.addCustomMessageHandler('shinyjs-removeClass', function (params) { shinyjs.debugMessage('shinyjs: calling function "removeClass" with parameters:'); shinyjs.debugMessage(params); shinyjs.removeClass(params); });
+        Shiny.addCustomMessageHandler('shinyjs-toggleClass', function (params) { shinyjs.debugMessage('shinyjs: calling function "toggleClass" with parameters:'); shinyjs.debugMessage(params); shinyjs.toggleClass(params); });
+        Shiny.addCustomMessageHandler('shinyjs-html', function (params) { shinyjs.debugMessage('shinyjs: calling function "html" with parameters:'); shinyjs.debugMessage(params); shinyjs.html(params); });
+        Shiny.addCustomMessageHandler('shinyjs-onevent', function (params) { shinyjs.debugMessage('shinyjs: calling function "onevent" with parameters:'); shinyjs.debugMessage(params); shinyjs.onevent(params); });
+        Shiny.addCustomMessageHandler('shinyjs-removeEvent', function (params) { shinyjs.debugMessage('shinyjs: calling function "removeEvent" with parameters:'); shinyjs.debugMessage(params); shinyjs.removeEvent(params); });
+        Shiny.addCustomMessageHandler('shinyjs-alert', function (params) { shinyjs.debugMessage('shinyjs: calling function "alert" with parameters:'); shinyjs.debugMessage(params); shinyjs.alert(params); });
+        Shiny.addCustomMessageHandler('shinyjs-logjs', function (params) { shinyjs.debugMessage('shinyjs: calling function "logjs" with parameters:'); shinyjs.debugMessage(params); shinyjs.logjs(params); });
+        Shiny.addCustomMessageHandler('shinyjs-runjs', function (params) { shinyjs.debugMessage('shinyjs: calling function "runjs" with parameters:'); shinyjs.debugMessage(params); shinyjs.runjs(params); });
+        Shiny.addCustomMessageHandler('shinyjs-reset', function (params) { shinyjs.debugMessage('shinyjs: calling function "reset" with parameters:'); shinyjs.debugMessage(params); shinyjs.reset(params); });
+        Shiny.addCustomMessageHandler('shinyjs-delay', function (params) { shinyjs.debugMessage('shinyjs: calling function "delay" with parameters:'); shinyjs.debugMessage(params); shinyjs.delay(params); });
+        Shiny.addCustomMessageHandler('shinyjs-click', function (params) { shinyjs.debugMessage('shinyjs: calling function "click" with parameters:'); shinyjs.debugMessage(params); shinyjs.click(params); });
+        Shiny.addCustomMessageHandler('shinyjs-refresh', function (params) { shinyjs.debugMessage('shinyjs: calling function "refresh" with parameters:'); shinyjs.debugMessage(params); shinyjs.refresh(params); });
+        Shiny.addCustomMessageHandler('shinyjs-getcookie', function (params) { shinyjs.debugMessage('shinyjs: calling function "getcookie" with parameters:'); shinyjs.debugMessage(params); shinyjs.getcookie(params); });
+        Shiny.addCustomMessageHandler('shinyjs-setcookie', function (params) { shinyjs.debugMessage('shinyjs: calling function "setcookie" with parameters:'); shinyjs.debugMessage(params); shinyjs.setcookie(params); });
+        Shiny.addCustomMessageHandler('shinyjs-rmcookie', function (params) { shinyjs.debugMessage('shinyjs: calling function "rmcookie" with parameters:'); shinyjs.debugMessage(params); shinyjs.rmcookie(params); });
+        shinyjs.getcookie = function (params) {
+            var cookie = Cookies.get("shinyauthr");
+            if (typeof cookie !== "undefined") {
+                Shiny.setInputValue("login_jscookie", cookie);
+            } else {
+                var cookie = "";
+                Shiny.setInputValue("login_jscookie", cookie);
+            }
+        }
+        shinyjs.setcookie = function (params) {
+            Cookies.set("shinyauthr", escape(params), { expires: 7 });
+            Shiny.setInputValue("login_jscookie", params);
+        }
+        shinyjs.rmcookie = function (params) {
+            Cookies.remove("shinyauthr");
+            Shiny.setInputValue("login_jscookie", "");
+        }
+        $(document).keyup(function (event) {
+            if ($('#login_password').is(':focus') && event.keyCode == 13) {
+                $('#login_button').click()
+            }
+        })
+    </script>
+</head>
+
+<body>
+    <div class="container-fluid" style="min-height: calc(100vh - 50px);">
+        <div class="shiny-spinner-output-container shiny-spinner-hideui ">
+            <div class="load-container shiny-spinner-hidden load1">
+                <div id="spinner-8bfa8a10986c94c3af7fcc21fdaf8f53" class="loader">Loading...</div>
+            </div>
+            <div style="height:400px" class="shiny-spinner-placeholder"></div>
+            <div id="web_app" class="shiny-html-output"></div>
+        </div>
+    </div>
+    <footer class="page-footer font-small blue pt-4 well" style="height: 50px; margin: 0; padding: 0; display: flex;">
+        <img src="https://www.spang-lab.de/images/logo/ur.png" alt="ur.png" style="display:inline-block;">
+        <span style="flex-grow: 1;"></span>
+        <span style="flex-grow: 1;">
+            <p style="margin: 0">
+                <a href="https://www.uni-regensburg.de/">University of Regensburg</a>&nbsp;&nbsp; > &nbsp;
+                <a
+                    href="https://www.uni-regensburg.de/medicine/institute-functional-genomics/institute-of-functional-genomics/index.html">Institute
+                    of Functional Genomics</a>&nbsp; > &nbsp;
+                <a href="https://www.spang-lab.de/">Department of Statistical Bioinformatics</a>
+            </p>
+            <p style="margin: 0">
+                <span style="flex-grow: 1;"></span>
+                <a href="https://www.spang-lab.de/contact">Impressum</a>&nbsp; - &nbsp;
+                <a href="https://www.spang-lab.de/disclaimer">Legal Notice</a>&nbsp; - &nbsp;
+                <a href="https://www.spang-lab.de/privacy">Privacy</a>&nbsp;
+                <span style="flex-grow: 1;"></span>
+            </p>
+        </span>
+        <span style="flex-grow: 1;"></span>
+        <img src="https://www.spang-lab.de/images/logo/logo_only_transparent.png"
+            style="max-height: 100%; max-width: 100%; display:inline-block;">
+    </footer>
+</body>
+
+</html>

@@ -35,4 +35,4 @@ server <- function(input, output, session) {
   })
 }
 
-runApp(shinyApp(ui, server))
+shinyApp(ui, server)

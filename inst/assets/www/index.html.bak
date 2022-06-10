@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title> MyPhoto</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h1>Page Title</h1>
+    <div class="container">
+        <h1>Our Print Sizes</h1>
+        <div class="row justify-content-center">
+          <div class="col-sm-6 col-md-3">Small</div>
+          <div class="col-sm-6 col-md-3">Medium</div>
+        </div>
+        <div class="row justify-content-start">
+          <div class="col-sm-6 col-md-3">Large</div>
+          <div class="col-sm-6 col-md-3">Extra Large</div>
+        </div>
+        <div class="row justify-content-end">
+          <div class="col-sm-6 col-md-3">Enormous</div>
+          <div class="col-sm-6 col-md-3">Extra Enormous</div>
+        </div>
+    </div>
+    <div class="alert alert-success">Cool alert message!</div>
+    <div class="container">
+        <div class="row"><h2>Container content!</h2></div>
+        <div class="row"><h3>Row 1 content</h3></div>
+        <div class="row">
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 0</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 1</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 2</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 3</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 4</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 5</p></div>
+        </div>
+        <div class="row"><h3>Row 2 content (n-gutters)</h3></div>
+        <div class="row no-gutters">
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 0</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 1</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 2</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 3</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 4</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 5</p></div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row"><h2>Fluid Container content!</h2></div>
+        <div class="row"><h3>Row 1 content</h3></div>
+        <div class="row">
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 0</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 1</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 2</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 3</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 4</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 5</p></div>
+        </div>
+        <div class="row"><h3>Row 2 content</h3></div>
+        <div class="row">
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 0</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 1</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 2</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 3</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 4</p></div>
+            <div class="col-xs-6 col-sm-4 col-md-2"><p>Dummy Text 5</p></div>
+        </div>
+    </div>
+    <div>
+        <div><h2>Normal div content!</h2></div>
+        <div>
+            <div><h3>Inner Div 1 content</h3></div>
+            <div><p>Dummy Text 0</p></div>
+            <div><p>Dummy Text 1</p></div>
+            <div><p>Dummy Text 2</p></div>
+            <div><p>Dummy Text 3</p></div>
+            <div><p>Dummy Text 4</p></div>
+            <div><p>Dummy Text 5</p></div>
+        </div>
+        <div>
+            <div><h3>Inner Div 2 content</h3></div>
+            <div><p>Dummy Text 0</p></div>
+            <div><p>Dummy Text 1</p></div>
+            <div><p>Dummy Text 2</p></div>
+            <div><p>Dummy Text 3</p></div>
+            <div><p>Dummy Text 4</p></div>
+            <div><p>Dummy Text 5</p></div>
+        </div>
+    </div>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/popper.js/dist/popper.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>
