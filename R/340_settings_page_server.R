@@ -1,4 +1,4 @@
-server__settings_tab_server <- function(data) {
+settings_tab_server <- function(data) {
   # Overview Tables
   data$output$S_PA_TBL <- render_dt(
     .tbl = database$Papers,

@@ -11,8 +11,8 @@ web_app_ui <- function(data) {
 side_bar <- function() {
   sidebarPanel(
     width=3,
-    pickerInput("MM", "Models", choices=list(), multiple=TRUE),
-    pickerInput("DD", "Datasets", choices=list(), multiple=TRUE),
+    pickerInput("model_names", "Models", choices=list(), multiple=TRUE),
+    pickerInput("dataset_names", "Datasets", choices=list(), multiple=TRUE),
     tagList(
       selectInput(
         inputId="PASC",

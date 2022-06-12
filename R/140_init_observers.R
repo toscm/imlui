@@ -1,24 +1,28 @@
-server__setup_observers <- function(data) {
+setup_observers <- function(data) {
   observeEvent(
     "run_only_once_at_start",
-    server__set_user_to_authenticated_if_coming_back_from_github_oauth(data),
+    set_user_to_authenticated_if_coming_back_from_github_oauth(data),
     once = TRUE
   )
   observeEvent(
     input$login_button,
-    server__set_login_cookie_if_credentials_are_ok()
+    set_login_cookie_if_credentials_are_ok()
   )
   observeEvent(
     input$logout_button,
-    server__remove_cookie_and_reload_session()
+    remove_cookie_and_reload_session()
   )
   observeEvent(
     input$login_github_button,
-    server__start_github_oauth2_flow()
+    start_github_oauth2_flow()
   )
   observeEvent(
-    rv$user$is_authenticated,
-    server__restore_appstate
+    eventExpr = data$rv$user_id,
+    handlerExpr = {
+      if (data$rv$user$id != "public") {
+        restore_appstate(data)
+      }
+    }
   )
   observeEvent(
     session$clientData,
@@ -27,14 +31,13 @@ server__setup_observers <- function(data) {
   )
   observeEvent(
     input$login_jscookie,
-    server__update_cookie_expiry_date()
+    update_cookie_expiry_date()
   )
   observe({
     reactiveValuesToList(input)
     # Not quite sure why this is necessary. Maybe to trigger this on any input
-    # change, however if this is the case, converting to all reactive values to
-    # a list seems a bit costly in terms of runtime. Maybe improve
-    # later.
+    # change, however if this is the case, converting all reactive values to
+    # a list seems a bit costly in terms of runtime. Maybe improve later.
     session$doBookmark()
     # Update the query string (triggers onBookmark and onBookmarked callback
     # functions). Based on:
@@ -48,8 +51,8 @@ server__setup_observers <- function(data) {
   )
 }
 
-server__set_user_to_authenticated_if_coming_back_from_github_oauth <- function(data) {
-  # should be called once at the beginning of the server function
+set_user_to_authenticated_if_coming_back_from_github_oauth <- function(data) {
+  # Should be called once at the beginning of the server function
   logsne("Checking if coming back from Github Auth...")
   reload_on_logout <- TRUE
   if (is.null(url_params$code)) {
@@ -119,20 +122,16 @@ server__set_user_to_authenticated_if_coming_back_from_github_oauth <- function(d
   }
 }
 
-server__remove_cookie_and_reload_session <- function(data) { # should be called after logout_button was clicked
+remove_cookie_and_reload_session <- function(data) { # should be called after logout_button was clicked
   logsne("Event `input$logout_button` observed:", input$logout_button)
   shinyjs::js$rmcookie()
   session$reload()
 }
 
-server__restore_appstate <- function(data) { # should be called after user is authenticated successfully
+restore_appstate <- function(data) {
+  # should be called after user is authenticated successfully
   last_url <- x[x$user_id == rv$user$id & x$resource_id == "url", "resource_value"]
   logsne("Event `RV$user$is_authenticated` triggered ...")
-  # logsne("\tconnected user:", dput2(rv$user$id))
-  # logsne("\tlast url:", dput2(last_url))
-  # logsne("\tcurrent url:", dput2(url)) # this value is changed through the bookmarking stuff!
-  # logsne("\tsession start url params:", dput2(url_params)) # this is the true URL obtained from the browser
-  # logsne("\tcurrent url search:", dput2(session$clientData$url_search)) # true URL obtained from browser
   if (grepl("&redirect=false", url_search)) {
     logsne("\tURL parameter `redirect=false` is present, so do no more redirections")
   } else if (length(last_url) == 0) {
@@ -147,14 +146,14 @@ server__restore_appstate <- function(data) { # should be called after user is au
   }
 }
 
-server__force_browser_to_set_login_jscookie_input <- function() {
+force_browser_to_set_login_jscookie_input <- function() {
   logsne("Javascript is ready. Calling `shinyjs::js$getcookie()` to set `input$login_jscookie` ...")
   shinyjs::js$getcookie()
 
-  observeEvent(shiny::isTruthy(shinyjs::js$getcookie()), server__force_browser_to_set_login_jscookie_input)
+  observeEvent(shiny::isTruthy(shinyjs::js$getcookie()), force_browser_to_set_login_jscookie_input)
 }
 
-server__update_cookie_expiry_date <- function() { # run when_valid_cookie_is_present
+update_cookie_expiry_date <- function() { # run when_valid_cookie_is_present
   logsne("Variable `input$login_jscookie` is available, starting authentication...")
   if (rv$user$is_authenticated) {
     logsne("\tNothing to do. Already authenticated.")
@@ -186,7 +185,7 @@ server__update_cookie_expiry_date <- function() { # run when_valid_cookie_is_pre
   }
 }
 
-server__set_login_cookie_if_credentials_are_ok <- function() {
+set_login_cookie_if_credentials_are_ok <- function() {
   logsne("login button clicked:", input$login_button)
   users_idx <- which(database$users$user_id == input$login_user_name)
   if (input$login_user_name %in% database$users$user_id) {
@@ -212,7 +211,7 @@ server__set_login_cookie_if_credentials_are_ok <- function() {
   }
 }
 
-server__start_github_oauth2_flow <- function() {
+start_github_oauth2_flow <- function() {
   # start OAuth2.0 authentication, i.e. redirect to
   # <https://github.com/login/oauth/{authorize/access_token}>
   logsne("input$login_button_github clicked:", input$login_button_github)
@@ -222,11 +221,9 @@ server__start_github_oauth2_flow <- function() {
     scope = ""
   )
   output$web_app <- redirection_to(url)
-  rv$oauth2_flow_started <- TRUE # TODO: remove if not used
-  rv$redirected_to <- "Github" # TODO: remove if not used
 }
 
-server__print_url_parts <- function() {
+print_url_parts <- function() {
   logsne("session$clientData changed:")
   logsne("url_protocol:", session$clientData$url_protocol)
   logsne("url_hostname:", session$clientData$url_hostname)
@@ -239,7 +236,7 @@ server__print_url_parts <- function() {
   logsne("output_web_app_height:", session$clientData$output_web_app_height)
 }
 
-server__store_appstate_in_db <- function() {
+store_appstate_in_db <- function() {
 	# call from server func in onStop, i.e. will be called before onSessionEnded
   logsne("Event onStop triggered in server: storing appstate as URL in DB...")
   user_id <- isolate(rv$user$id)

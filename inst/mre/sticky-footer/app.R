@@ -20,8 +20,8 @@ library("htmltools")
 				sidebarPanel(
 					width=3,
 					style="min-height: 100%;",
-					pickerInput("MM", "Models", choices=c("a", "b"), multiple=TRUE),
-					pickerInput("DD", "Datasets", choices=c("c", "d"), multiple=TRUE)
+					pickerInput("M", "Models", choices=c("a", "b"), multiple=TRUE),
+					pickerInput("D", "Datasets", choices=c("c", "d"), multiple=TRUE)
 				),
 				mainPanel(width=9,
 					actionButton(

@@ -1,6 +1,6 @@
 # See README/#ui-layout for an overview
 ui <- function(request) {
-  logsne("Starting web app from process ID:", Sys.getpid(), "...")
+  logsne("Starting ui func from process ID:", Sys.getpid(), "...")
   tagList(
     tags$head(tags$style(HTML("html, body {height: 100%; margin: 0;}"))),
     fluidPage(
@@ -23,7 +23,7 @@ ui <- function(request) {
         functions = c("getcookie", "setcookie", "rmcookie")
       ),
       shinyjs::extendShinyjs(text = js_return_click(), functions = c()),
-      uiOutput(outputId="webapp")
+      # uiOutput(outputId="webapp")
     )
   )
 }

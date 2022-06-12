@@ -1,8 +1,8 @@
-server__print_startup_message <- function() {
+print_startup_message <- function() {
 	logsne("Starting server from process ID:", Sys.getpid(), "...")
 }
 
-server__configure_bookmarking <- function() {
+configure_bookmarking <- function() {
 	logsne("Configuring Bookmark excludes...")
 	setBookmarkExclude(c(
 		"dim",

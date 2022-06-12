@@ -21,7 +21,7 @@
 #' @importFrom utils str
 #' @importFrom utils capture.output data help packageVersion str
 #' @importFrom shinycssloaders withSpinner
-#' @importFrom DBI dbConnect dbCreateTable dbDisconnect dbExecute dbListTables dbReadTable dbWriteTable
+#' @importFrom memoise memoise
 
 # Globals to shadow tidyverse NSE shit (TODO: remove)
 where <- function() stop("This function should never be called!")

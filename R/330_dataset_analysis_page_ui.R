@@ -8,7 +8,7 @@ dataset_analysis_page <- function() {
 			xtc <- ytc <- c("identity", "log2", "log10")
 			xt <- isolate(input$MSDP_XT) %||% "identity"
 			yt <- isolate(input$MSDP_YT) %||% "identity"
-			mm <- MM()
+			mm <- data$r$model$symbol_list()
 			# Row 1 (plot only)
 			MSDP_PO <- column(12, withSpinner(plotOutput(outputId="MSDP", height=PAHPX1(), width=PAWPX() )))
 			row1 <- fluidRow(MSDP_PO)
@@ -18,7 +18,7 @@ dataset_analysis_page <- function() {
 			if (is.none(mm) ) {
 				row2 <- fluidRow(MSDP_XT_SI, MSDP_YT_SI)
 			} else {
-				m <- isolate(input$MSDP_M) %||% MM()[[1]]
+				m <- isolate(input$MSDP_M) %||% data$r$model$symbol_list()[[1]]
 				MSDP_M_SI <- column(4, selectInput(inputId="MSDP_M", label="Model", choices=mm, selected=m))
 				MSS_MFO_CI <- column(3, checkboxInput(inputId="MSDP_MFO", label="Model Features only", value=TRUE))
 				row2 <- fluidRow(MSDP_XT_SI, MSDP_YT_SI, MSDP_M_SI, MSS_MFO_CI)
