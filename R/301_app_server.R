@@ -1,7 +1,7 @@
 web_app_ui_server <- function(data) {
   # TEXT OUTPUTS
 	## OK: App Info - Text-Output
-	data$output$AI_TO <- renderUI({
+	ses$output$AI_TO <- renderUI({
 		div( HTML( paste0(
 			"<b>UserID:</b> ",         USER_ID(),                 "<br>",
 			"<b>Version:</b> ",        V,                         "<br>",
@@ -13,14 +13,14 @@ web_app_ui_server <- function(data) {
 	})
 
 	## OK: Dataset-Description Text-Output
-	data$output$DA_D_T <- renderPrint({
+	ses$output$DA_D_T <- renderPrint({
 		walk(DD(), ~ cat(.x, "\n", describe_df(df[[.x]]()), "\n"))
 	})
 
 	## TODO: Model-Description Text-Output
-	data$output$MA_MD_TO <- renderPrint({
+	ses$output$MA_MD_TO <- renderPrint({
 		# logsne("MA_DD_TO")
-		pp <- data$r$model$params_list()()
+		pp <- ses$r$model$params_list()()
 		for (i in seq_along(pp)) {
 			cat(names(pp)[[i]], "\n", sep="")
 			str(pp[[i]], max.level=NA)

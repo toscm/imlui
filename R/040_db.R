@@ -15,8 +15,13 @@ DB <- R6::R6Class(
       "assets/sqlite/imlui_db.sqlite",
       package = "imlui"
     ),
-    initialize = function(config = read_imlui_config_file()) {
-      do.call(rlang::env_bind, c(self, config$dbms))
+    #' @description #' Create and connect a new DB object
+    #' @param config Either list(type="sqlite", filepath="...") or
+    #' list(type="postgres", hostname="...", port="...", database="...",
+    #' username="...", password="...")
+    #' @return A new `DB` object.
+    initialize = function(config = pkg$imlui_config) {
+      do.call(rlang::env_bind, c(self, config))
       return(invisible(self$connect()))
     },
     connect = function() {

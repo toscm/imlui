@@ -6,7 +6,7 @@ tab__model_analysis <- function(data) {
       xx = NXX(),
       xt = input$MSDP_XT,
       yt = input$MSDP_YT,
-      ff = if (not.none(input$MSDP_M) && input$MSDP_MFO) data$r$model$features[[input$MSDP_M]]() else ""
+      ff = if (not.none(input$MSDP_M) && input$MSDP_MFO) ses$r$model$features[[input$MSDP_M]]() else ""
     )
   })
   output$MSDP <- renderSVG(.name = "MSDP", .func = makeMSDPlot, .argfunc = MSDP)
@@ -18,8 +18,8 @@ tab__model_analysis <- function(data) {
     .s <- input$FEP_S
     .f <- input$FEP_F
     .v <- input$FEP_V
-    .m <- if (not.none(data$r$model$symbol_list())) data$r$model$symbol_list()[[1]] else NULL
-    b <- if (not.none(.m)) data$r$model$params[[.m]]() else NULL
+    .m <- if (not.none(ses$r$model$symbol_list())) ses$r$model$symbol_list()[[1]] else NULL
+    b <- if (not.none(.m)) ses$r$model$params[[.m]]() else NULL
     X <- if (not.none(.d)) df[[.d]]() else NULL
     s <- if (not.none(.s) && not.none(X) && .s %in% rownames(X)) .s else NULL
     debug <- input$FEP_DBG
@@ -34,7 +34,7 @@ tab__model_analysis <- function(data) {
   output$PHP <- renderImage(
     expr = {
       .arglist <- list(
-        predictions = YYY()[[data$r$model$symbol_list()[[1]]]],
+        predictions = YYY()[[ses$r$model$symbol_list()[[1]]]],
         density_lines = input$PHP_DL,
         rug = input$PHP_R,
         binwidth = as.numeric(input$PHP_BW)

@@ -17,9 +17,9 @@ setup_observers <- function(data) {
     start_github_oauth2_flow()
   )
   observeEvent(
-    eventExpr = data$rv$user_id,
+    eventExpr = ses$rv$user_id,
     handlerExpr = {
-      if (data$rv$user$id != "public") {
+      if (ses$rv$user$id != "public") {
         restore_appstate(data)
       }
     }
@@ -46,7 +46,7 @@ setup_observers <- function(data) {
   onBookmarked(
     function(url) {
       updateQueryString(queryString = url)
-      data$statics$url <- url
+      ses$statics$url <- url
     }
   )
 }

@@ -6,7 +6,7 @@ model_analysis_page <- function(data) {
     ),
     tabPanel("Predictions",
       uiOutput(outputId="MA_MP_T"),
-      if (length(data$r$model$symbol_list()) == 0) {
+      if (length(ses$r$model$symbol_list()) == 0) {
         div(HTML("Please choose a dataset and model first"))
       } else if (length(DD()) == 0) {
         div(HTML("Please choose a dataset and model first"))
@@ -28,9 +28,9 @@ model_analysis_page <- function(data) {
       )
     ),
     tabPanel("Feature Effects",
-      if (length(data$r$model$symbol_list()) < 1) {
+      if (length(ses$r$model$symbol_list()) < 1) {
         div(HTML("Please choose a model first"))
-      } else if (length(data$r$model$symbol_list()) > 1) {
+      } else if (length(ses$r$model$symbol_list()) > 1) {
         div(HTML("Usage of multiple models is not yet implemented"))
       } else {
         if (length(DD()) < 1) {
@@ -48,7 +48,7 @@ model_analysis_page <- function(data) {
             fluidRow(
               column(2, selectInput(inputId="FEP_D", label="Dataset", choices=DD())),
               column(2, selectInput(inputId="FEP_S", label="Sample", choices=SS()[[input$FEP_D]])),
-              column(2, selectInput(inputId="FEP_F", label="Feature", choices=names(data$r$model$params_list()()[[1]]))),
+              column(2, selectInput(inputId="FEP_F", label="Feature", choices=names(ses$r$model$params_list()()[[1]]))),
               {
                 d <- input$FEP_D # dataset
                 s <- input$FEP_S # sample

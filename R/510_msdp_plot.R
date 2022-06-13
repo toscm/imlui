@@ -52,7 +52,7 @@ makeMSDPlot <- function(dd, xx, xt, yt, ff=NULL, shape=".") {
         p <- p + geom_point(aes(color=dataset), data) # shape=shape
         if (!is.none(ff)) {
             n <- length(ff)
-            data$id <- as.numeric(as.factor(data$feature))
+            ses$id <- as.numeric(as.factor(ses$feature))
             p <- p + geom_text(aes(label=feature, col=dataset), hjust=-0.2, vjust=-0.2, size=3)
         }
         p <- p + coord_trans(x=xt, y=yt)

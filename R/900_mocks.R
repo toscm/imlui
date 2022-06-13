@@ -24,7 +24,8 @@ mock_session_obj_mem <- memoise(mock_session_obj)
 
 #' @title Return a shiny server input object (for Testing Purposes)
 #' @param ... Properties of returned input object
-#' @example input <- mock_input_obj(x = 1, y = 2)
+#' @examples
+#' input <- mock_input_obj(x = 1, y = 2)
 #' input$x == 1 && input$y == 2
 mock_input_obj <- function(...) {
   session <- mock_session_obj_mem()
@@ -48,24 +49,9 @@ mock_args <- function(func, ...) {
 
 #' @title Return a reactivevalues Object (for Testing Purposes)
 #' @param user_id Either 'toscm', 'max', 'public' or NULL
-mock_rvs_obj <- function(user_id = "max") {
+mock_rv_obj <- function(user_id = "max") {
   reactiveConsole(enabled = TRUE)
-  rv <- reactiveValues(
-    user = list(
-      id = NULL,
-      group_ids = NULL,
-      display_name = NULL,
-      github_id = NULL,
-      avatar_url = NULL,
-      password = NULL,
-      gitlab_id = NULL,
-      google_id = NULL,
-      spanglab_gitlab_id = NULL,
-      spanglab_auth_id = NULL,
-      is_authenticated = FALSE, # Deprecated. TODO: Remove
-      cookie_already_checked = FALSE # Deprecated. TODO: Remove
-    )
-  )
+  rv <- init_reactive_values(db = mock_db_obj())
   if (user_id == "toscm") {
     rv$user$id <- "toscm"
     rv$user$group_ids <- "admin;spang;public"
@@ -84,17 +70,15 @@ mock_rvs_obj <- function(user_id = "max") {
 }
 
 mock_db_obj <- function() {
-  if (is.null(cache_env$mock_db)) {
-    cache_env$mock_db <- DB$new(
+  if (is.null(mock$mock_db)) {
+    mock$mock_db <- DB$new(
       config = list(
-        dbms = list(
-          type = "sqlite",
-          filepath = system.file(
-            "assets/sqlite/mock_imlui_db.sqlite", package = "imlui"
-          )
+        type = "sqlite",
+        filepath = system.file(
+          "assets/sqlite/mock_imlui_db.sqlite", package = "imlui"
         )
       )
     )
   }
-  return(cache_env$mock_db$connect())
+  return(mock$mock_db$connect())
 }

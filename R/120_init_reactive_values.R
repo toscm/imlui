@@ -1,4 +1,4 @@
-init_reactive_values <- function() {
+init_reactive_values <- function(db) {
   reactiveValues(
     user = list(
       id = NULL,
@@ -13,6 +13,14 @@ init_reactive_values <- function() {
       spanglab_auth_id = NULL,
       is_authenticated = FALSE, # Deprecated. TODO: Remove
       cookie_already_checked = FALSE # Deprecated. TODO: Remove
+    ),
+    db = list(
+      models = `rownames<-`(x <- db$get_table("Models"), x$ID),
+      datasets = `rownames<-`(x <- db$get_table("Datasets"), x$ID),
+      mapping_groups_models = db$get_table("mapping_groups_models"),
+      mapping_users_models = db$get_table("mapping_users_models"),
+      mapping_groups_datasets = db$get_table("mapping_groups_datasets"),
+      mapping_users_datasets = db$get_table("mapping_users_datasets")
     )
   )
 }

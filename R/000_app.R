@@ -4,8 +4,7 @@ imluiApp <- function(config_file = NULL,
                      port = PORT,
                      quiet = TRUE,
                      display.mode = "normal", # c("auto", "normal", "showcase")
-                     test.mode = FALSE # used for automated tests
-) {
+                     test.mode = FALSE) { # used for automated tests
   logsne("ImluiApp started from process ID:", Sys.getpid(), "...")
   shiny::addResourcePath(
     prefix = "imlui/assets",
@@ -14,6 +13,8 @@ imluiApp <- function(config_file = NULL,
   shinyApp(
     ui = ui,
     server = server,
+    uiPattern = ".*", # regex
+    enableBookmarking = "url", # "url", "server" or "disable"
     onStart = function() {
       logsne("ShinyApp started from process ID:", Sys.getpid())
       log0ne("Open http://localhost:", port, " to preview the app")
@@ -26,9 +27,7 @@ imluiApp <- function(config_file = NULL,
       quiet = quiet,
       display.mode = "normal",
       test.mode = FALSE
-    ),
-    uiPattern = ".*", # regex
-    enableBookmarking = "url" # url, server or disable
+    )
   )
 }
 

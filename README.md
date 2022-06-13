@@ -27,11 +27,14 @@ A user interface (UI) for Interpretable Machine Learning (IML) methods.
   - [What happens when a user connects to the imlui server?](#what-happens-when-a-user-connects-to-the-imlui-server)
 - [Developer Guidelines](#developer-guidelines)
   - [Variable Naming Conventions](#variable-naming-conventions)
+  - [Variable Documentation](#variable-documentation)
   - [UI Principles](#ui-principles)
   - [UI Layout](#ui-layout)
   - [How to submit to CRAN?](#how-to-submit-to-cran)
   - [Idea: high performance Architecture](#idea-high-performance-architecture)
   - [Idea: Improve current architecture](#idea-improve-current-architecture)
+- [Todos](#todos)
+  - [By File](#by-file)
 
 ## Purpose
 
@@ -177,6 +180,55 @@ MDY <- Dataframe of Dataframes of prediction values
 |       | |_________________| | |_________| |
 |_______|_____________________|_____________|
 ```
+
+### Variable Documentation
+
++ `pkg`: *environment*. Process/package environment. Initalized during package loading in function `.onLoad()`.
+  + `datasets`: `mcache` object. Initalized during package loading in function `.onLoad()`. Can be updated only by function `getdata()` which is called only by reactives `ses$r$model$params[<model_symbol>]()` and `ses$r$dataset$df[dataset_symbol]()`.
+  + `models`: `list`.
+  + `db`: *DB object*. Used for interacting with IMLUI_DB. Initalized in `init_server_data` by calling `DB$new()`.
++ `ses`: *environment*. Session environment. Contains all data specific for a single user session. Initalized in `server()` by calling `init_server_data()`. Updated by almost every other function during a user session. For details see below.
+  + `input`: *reactiveValues*. Populated by `shiny::runApp` based on messages from browser via websocket and passed as readonly object to `server`.
+    + `dim`: *2 dimensional numeric vector*. Contains width and height of HTML body.
+  + `output`: *reactiveValues object*. Populated by `server` and passed as readonly object to `shiny::runApp` where it (potentially) triggers messages via websocker to browser.
+  + `session`: *ShinySession object*. Populated by `shiny::runApp` based on messages from browser via websocket and passed as readonly object to `server`.
+    + `clientData`: *reactiveValues object*.
+  + `const`: *list*. Values constant for a single session, like `url_hostname`, `url_port` determined at runtime after server has started.
+  + `rv`: *reactiveValues object*.
+    + `user`: *list of strings*. Elements are: id, group_ids, display_name, github_id, avatar_url, password, gitlab_id, google_id, spanglab_gitlab_id, spanglab_auth_id.
+    + `db`: *list of dataframes*. Each dataframe corresponds to a table in IMLUI_DB.
+  + `r`: *list of reactives and other lists*.
+    + `model`: *list*.
+      + `ids`: *reactive*. Returns a vector of all model IDs from IMLUI_DB for which the current user has access.
+      + `symbols`: *reactive*. Returns a vector of all model symbols from IMLUI_DB for which the current user has access.
+      + `displaynames`: *reactive*. Returns a vector of all model displaynames from IMLUI_DB for which the current user has access. The vector names are set to `ses$r$model$symbols()`.
+      + `pkgs`: *reactive*. Returns a vector of all model pkgs from IMLUI_DB for which the current user has access. The vector names are set to `ses$r$model$symbols()`.
+      + `params`: *list* **TODO: remove and use `pkg$datasets` for caching instead**
+        + `<model_symbol_1>`: *reactive*.
+        + `<model_symbol_2>`: *reactive*.
+        + ...
+      + `features`: *list* **TODO: remove and use `pkg$datasets` for caching instead**
+        + `<model_symbol_1>`: *reactive*.
+        + `<model_symbol_2>`: *reactive*.
+        + ...
+      + `symbols_list`: *reactive*.
+      + `params_list`: *reactive*.
+      + `features_list`: *reactive*.
+    + `dataset`: *list*
+      + ... **TODO**
+    + `size`: *list*
+      + ... **TODO**
+  + `app` **not yet implemented, just an idea (use shiny modules and nest their environment)**
+    + `input`
+    + `output`
+    + `session`
+    + `rv`
+    + `r`
+    + `login_page`
+    + `model_analysis_page`
+    + `dataset_analysis_page`
+    + `dataset_analysis_page`
+
 ### UI Principles
 
 + **Dont' make me think**: the webapp should be self-explanatory and intuitive to use, i.e. users should understand the purpose of the app and each component it it without having to think about it.
@@ -312,3 +364,47 @@ devtools::release() # Builds, tests and submits the package to CRAN.
 ### Idea: Improve current architecture
 
 Create separate environments for process data, e.g. `pdat` and session data, e.g. `sdat`. Then replace list of reactives for datasets with normal functions. The normal function stores the dataset in `pdat` if not yet available and then returns it. If already available, it directly returns it. Furthermore it stores the timestamp of the last access to that dataset. When a session is closed, datasets that haven't been used for 7 days or longer get deleted.
+
+## Todos
+
+### By File
+
+| File                               | R    | Test    |
+| ---------------------------------- | ---- | ------- |
+| 900_mocks.R                        | ok   |         |
+| 800_print_funcs.R                  | ok   |         |
+| 760_pkg_onload.R                   | ok   |         |
+| 740_pkg_utils.R                    | ok   |         |
+| 730_pkg_opts.R                     | ok   |         |
+| 720_pkg_imports.R                  | ok   |         |
+| 710_pkg_datasets.R                 | ok   |         |
+| 700_pkg_constants.R                | ok   |         |
+| 520_php_plot.R                     | ok   |         |
+| 510_msdp_plot.R                    | ok   |         |
+| 500_fep_plot.R                     | ok   |         |
+| 340_settings_page_ui.R             |      |         |
+| 340_settings_page_server.R         |      |         |
+| 330_dataset_analysis_page_ui.R     |      |         |
+| 330_dataset_analysis_page_server.R |      |         |
+| 321_model_analysis_page_server.R   |      |         |
+| 320_model_analysis_page_ui.R       |      |         |
+| 311_login_page_server.R            |      |         |
+| 310_login_page_ui.R                |      |         |
+| 301_web_app_server.R               | 6    |         |
+| 300_web_app_ui.R                   | 5    |         |
+| 190_server_utils.R                 | 4    |         |
+| 140_init_observers.R               | next |         |
+| 135_init_prediction_reactives.R    | 1    |         |
+| 134_init_dataset_reactives.R       | ok   | exists  |
+| 133_init_size_reactives.R          | ok   | exists  |
+| 132_init_model_reactives.R         | ok   | exists  |
+| 130_init_reactives.R               | 2    |         |
+| 120_init_reactive_values.R         | ok   | trivial |
+| 110_init_server_constants.R        | ok   | exists  |
+| 100_init_server_data.R             | 3    |         |
+| 050_config.R                       | ok   |         |
+| 040_db.R                           | ok   |         |
+| 030_ui.R                           |      |         |
+| 020_server.R                       |      |         |
+| 010_cli.R                          |      |         |
+| 000_app.R                          | ok   | trivial |

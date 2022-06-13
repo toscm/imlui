@@ -1,22 +1,22 @@
 settings_tab_server <- function(data) {
   # Overview Tables
-  data$output$S_PA_TBL <- render_dt(
+  ses$output$S_PA_TBL <- render_dt(
     .tbl = database$Papers,
     .invisible = c("ID", "Details", "Datasets", "Models", "Summary")
   ) # .visible=c("Year", "Author", "Title", "Summary")
-  data$output$S_MO_TBL <- render_dt(
+  ses$output$S_MO_TBL <- render_dt(
     .tbl = database$Models,
     .invisible = c("ID", "Symbol", "Features", "Betas", "Modeltype")
   ) # .visible=c("Platforms", "Methods", "Modeltype", "Symbol")
-  data$output$S_DS_TBL <- render_dt(
+  ses$output$S_DS_TBL <- render_dt(
     .tbl = database$Datasets,
     .invisible = c("Samples", "Symbol")
   ) # .visible=c("N", "M")
-  data$output$S_SA_TBL <- render_dt(.tbl = database$Samples)
-  data$output$S_DT_TBL <- render_dt(.tbl = database$Datatypes)
-  data$output$S_ME_TBL <- render_dt(.tbl = database$Methods)
-  data$output$S_PF_TBL <- render_dt(.tbl = database$Platforms)
-  data$output$S_SE_TBL <- render_dt(.tbl = database$Settings)
+  ses$output$S_SA_TBL <- render_dt(.tbl = database$Samples)
+  ses$output$S_DT_TBL <- render_dt(.tbl = database$Datatypes)
+  ses$output$S_ME_TBL <- render_dt(.tbl = database$Methods)
+  ses$output$S_PF_TBL <- render_dt(.tbl = database$Platforms)
+  ses$output$S_SE_TBL <- render_dt(.tbl = database$Settings)
 
   # Detail Tables
   output$S_PA_TBL2 <- render_dt2(

@@ -2,33 +2,30 @@
 #' @param input Input object as handed over to server functions by shiny
 #' @param rv List of reactive values as returned by
 #' [init_reactive_values()]
-#' @param db DB object as returned by `DB$new()`
-#' @return list with following reactive elements:
-#' tbl: "Models" table fetched from `db`
-#' ids: all elements of `tbl$ID` that may be accessed by the current user
-#' symbols: objects corresponding to `ids`
-#' names: display names corresponding to `ids`
-#' pkgs: R packages providing `symbols`
-#' features: features[<symbol>] == feature names corresponding to `<symbol>`
-#' params: features[<symbol>] == model params corresponding to `<symbol>`
-#' symbols_list: list of symbols currently selected by the user
-#' features_list: list of feature name vectors corresponding to symbols_list
-#' params_list: list of  model param vectors corresponding to symbols_list
-init_model_reactives <- function(input, rv, db) {
-
+#' @return list with following elements:
+#' * `ids`: reactive, all elements of `tbl$ID` that may be accessed by the
+#'   current user
+#' * `symbols`: reactive, `R` objects corresponding to `ids()`
+#' * `displaynames`: reactive, display names corresponding to `ids()`
+#' * `pkgs`: reactive, R packages providing `symbols`
+#' * `features`: list of reactives, feature names for each symbol in `symbols()`
+#' * `params`: list of reactives, model params for each symbol in `symbols()`
+#' * `symbols_list`: reactive, list of symbols currently selected by the user
+#' * `features_list`: reactive, list of feature name vectors corresponding to
+#'   `symbols_list()`
+#' * `params_list`: reactive, list of  model param vectors corresponding to
+#'   `symbols_list()`
+init_model_reactives <- function(input, rv) {
   logsne("Initializing model reactives ...")
 
-  # Reactives depending only on `rv$user$id` and `db`. `params` and `features` are
-  # lists of reactives (one per model symbol).
-  tbl <- reactive(`rownames<-`(x <- db$get_table("Models"), x$ID))
-  ids <- reactive(get_accessible_model_ids(
-    user_id = rv$user$id,
-    group_ids = rv$user$group_ids,
-    db = db
-  ))
-  symbols <- reactive(tbl()[ids(), "Symbol"])
-  displaynames <- reactive(`names<-`(tbl()[ids(), "Name"], symbols()))
-  pkgs <- reactive(`names<-`(tbl()[ids(), "Package"], symbols()))
+  # Reactives depending only on `rv` that return vectors.
+  ids <- reactive(get_accessible_model_ids(rv))
+  symbols <- reactive(rv$db$models[ids(), "Symbol"])
+  displaynames <- reactive(`names<-`(rv$db$models[ids(), "Name"], symbols()))
+  pkgs <- reactive(`names<-`(rv$db$models[ids(), "Package"], symbols()))
+
+  # Lists of reactives depending only on `rv`. Each reactive from the list
+  # returns a vector.
   params <- clapply(symbols(), function(s) {
     reactive(getdata(sym = s, typ = "model", pkg = pkgs()[s]))
   })
@@ -36,8 +33,8 @@ init_model_reactives <- function(input, rv, db) {
     reactive(names(params[[s]]()))
   })
 
-  # Reactives depending on `input`, `rv$user$id` and `db` that return lists.
-  symbols_list <- reactive( # list(char)
+  # Reactives depending on `rv` and `input` that return lists.
+  symbols_list <- reactive(
     if (!is.null(input$model_names)) {
       symbols()[match(input$model_names, displaynames())]
     } else {
@@ -47,22 +44,19 @@ init_model_reactives <- function(input, rv, db) {
   params_list <- reactive(clapply(symbols_list(), function(m) params[[m]]()))
   features_list <- reactive(clapply(symbols_list(), function(m) features[[m]]()))
 
-  # Return current environment without functions args as list
-  x <- as.list(environment())
-  x[names(formals(init_model_reactives))] <- NULL
-  return(x)
+  return(function_locals())
 }
 
-get_accessible_model_ids <- function(user_id, group_ids, db) {
-  valid_ids <- db$execute("SELECT ID FROM Models WHERE Length(Symbol) > 0")$ID
-  if (grepl("admin", group_ids)) {
+get_accessible_model_ids <- function(rv) {
+  valid_ids <- rv$db$models[nchar(rv$db$models$Symbol) > 0, "ID"]
+  if (grepl("admin", rv$user$group_ids)) {
     return(valid_ids)
   } else {
-    mgm <- db$get_table("mapping_groups_models")
-    idx1 <- stringr::str_detect(group_ids, pattern = mgm$group_id)
+    mgm <- rv$db$mapping_groups_models
+    idx1 <- stringr::str_detect(rv$user$group_ids, pattern = mgm$group_id)
     ids1 <- mgm$model_id[idx1]
-    mum <- db$get_table("mapping_users_models")
-    idx2 <- mum$user_id == user_id
+    mum <- rv$db$mapping_users_models
+    idx2 <- mum$user_id == rv$user$id
     ids2 <- mum$model_id[idx2]
     authorized_ids <- unique(c(ids1, ids2))
     return(intersect(valid_ids, authorized_ids))

@@ -12,8 +12,7 @@ init_server_constants <- function(session, db) {
     url_search
   )
   github_redirect_url <- paste0(
-    url_protocol, "//", url_hostname, ":",
-    url_port, url_pathname
+    url_protocol, "//", url_hostname, ":", url_port, url_pathname
   )
   shinygithub_oauth_app <- httr::oauth_app(
     appname = "shinygithub", # 1
@@ -32,8 +31,5 @@ init_server_constants <- function(session, db) {
     x
   })
 
-  locals <- setdiff(ls(), c("session", "db", "x"))
-  constants <- lapply(locals, get, env = rlang::current_env())
-  names(constants) <- locals
-  return(constants)
+  return(function_locals(without = "x"))
 }

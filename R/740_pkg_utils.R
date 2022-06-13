@@ -20,15 +20,16 @@
 #'   # We need to go 4 frames up, to catch the formalArgs of `f`, because the
 #'   # `caller(4)` argument is not evaluated directly be `formalArgs`.
 #' }
-#' f() == list(x = 3, y = 4)
+#' all.equal(setdiff(f(), list(x = 3, y = 4)), list())
+#'
 #' # The same result could have been achieved as follows
 #' f <- function(a = 1, b = 2) {
 #'   x <- 3
 #'   y <- 4
-#' 	func <- caller(1)
+#'   func <- caller(1)
 #'   return(locals(without = c("func", formalArgs(func))))
 #' }
-#' f() == list(x = 3, y = 4)
+#' all.equal(setdiff(f(), list(x = 3, y = 4)), list())
 caller <- function(n = 1) {
   calls <- sys.calls()
   frame <- sys.nframe() - n
@@ -39,17 +40,37 @@ caller <- function(n = 1) {
   }
 }
 
-# Return current environment as list
+#' @title Return current environment as list
 locals <- function(without = c(), env = parent.frame()) {
   x <- as.list(env)
   x[without] <- NULL
   return(x)
 }
 
-current_function_locals <- function() {
-	return(locals(without = formalArgs(caller(4))))
+#' @title Return function environment as list
+#' @description Return current env without function arguments as list. Raises
+#' an error when called outside a function.
+#' @param strip_function_args Whether to exclude symbols with the same name as
+#' the function arguments
+#' @examples
+#' f <- function(a = 1, b = 2) {
+#'   x <- 3
+#'   y <- 4
+#'   return(function_locals())
+#' }
+#' all.equal(setdiff(f(), list(x = 3, y = 4)), list())
+function_locals <- function(without = c(), strip_function_args = TRUE) {
+  if (strip_function_args) {
+    return(
+      locals(
+        without = c(without, formalArgs(caller(5))),
+        env = parent.frame()
+      )
+    )
+  } else {
+    return(locals(env = parent.frame()))
+  }
 }
-
 
 # Like purrrs %||% but also checks for empty lists and empty strings (%d% for default)
 `%d%` <- function(x, y) {
@@ -187,17 +208,17 @@ glueerr <- function(...) {
 
 # # TODO
 # help_console <- function(topic, format=c("text", "html", "latex", "Rd"),
-# 						 lines=NULL, before=NULL, after=NULL) {
+#              lines=NULL, before=NULL, after=NULL) {
 #   format=match.arg(format)
 #   if (!is.character(topic)) topic <- deparse(substitute(topic))
 #   helpfile = utils:::.getHelpFile(help(topic))
 #   hs <- capture.output(switch(format,
-# 							  text=tools::Rd2txt(helpfile),
-# 							  html=tools::Rd2HTML(helpfile),
-# 							  latex=tools::Rd2latex(helpfile),
-# 							  Rd=tools:::prepare_Rd(helpfile)
-# 							  )
-# 					  )
+#                 text=tools::Rd2txt(helpfile),
+#                 html=tools::Rd2HTML(helpfile),
+#                 latex=tools::Rd2latex(helpfile),
+#                 Rd=tools:::prepare_Rd(helpfile)
+#                 )
+#             )
 #   if(!is.null(lines)) hs <- hs[lines]
 #   hs <- c(before, hs, after)
 #   cat(hs, sep="\n")
@@ -207,35 +228,35 @@ glueerr <- function(...) {
 # TODO: Copied from shinyauthr:::js_cookie_to_r_code. Cite or rewrite.
 js_cookie_to_r_code <- function() {
   return('
-		shinyjs.getcookie = function(params) {
-			var cookie = Cookies.get("shinyauthr");
-			if (typeof cookie !== "undefined") {
-				Shiny.setInputValue("login_jscookie", cookie);
-			} else {
-				var cookie = "";
-				Shiny.setInputValue("login_jscookie", cookie);
-			}
-		}
-		shinyjs.setcookie = function(params) {
-			Cookies.set("shinyauthr", escape(params), { expires: 7 });
-			Shiny.setInputValue("login_jscookie", params);
-		}
-		shinyjs.rmcookie = function(params) {
-			Cookies.remove("shinyauthr");
-			Shiny.setInputValue("login_jscookie", "");
-		}
-	')
+    shinyjs.getcookie = function(params) {
+      var cookie = Cookies.get("shinyauthr");
+      if (typeof cookie !== "undefined") {
+        Shiny.setInputValue("login_jscookie", cookie);
+      } else {
+        var cookie = "";
+        Shiny.setInputValue("login_jscookie", cookie);
+      }
+    }
+    shinyjs.setcookie = function(params) {
+      Cookies.set("shinyauthr", escape(params), { expires: 7 });
+      Shiny.setInputValue("login_jscookie", params);
+    }
+    shinyjs.rmcookie = function(params) {
+      Cookies.remove("shinyauthr");
+      Shiny.setInputValue("login_jscookie", "");
+    }
+  ')
 }
 
 # TODO: Copied from shinyauthr:::js_return_click. Cite or rewrite.
 js_return_click <- function() {
   return("
-		$(document).keyup(function (event) {
-			if ($('#login_password').is(':focus') && event.keyCode == 13) {
-				$('#login_button').click()
-			}
-		})
-	")
+    $(document).keyup(function (event) {
+      if ($('#login_password').is(':focus') && event.keyCode == 13) {
+        $('#login_button').click()
+      }
+    })
+  ")
 }
 
 
@@ -337,12 +358,12 @@ nl_nv_2_df <- function(nl_nv, col1 = "dataset", col2 = "sample", col3 = "y") {
 
 # #' Convert named list of named lists `nl` to tibble:
 # nl2t <- function(nl) {
-# 	rnams <- names(nl)
-# 	expr = reduce(map(nl, names), union)
-# 	cols <- clapply(cnams, function(j) sapply(rnams, function(i) null2na(nl[[i]][[j]])))
-# 	df <- as_tibble(cols)
-# 	rownames(df) <- rnams
-# 	df
+#   rnams <- names(nl)
+#   expr = reduce(map(nl, names), union)
+#   cols <- clapply(cnams, function(j) sapply(rnams, function(i) null2na(nl[[i]][[j]])))
+#   df <- as_tibble(cols)
+#   rownames(df) <- rnams
+#   df
 # }
 
 # Replace backslashes with forward slashes

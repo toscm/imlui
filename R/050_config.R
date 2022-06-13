@@ -1,35 +1,28 @@
 # Return content `IMLUI_CONFIG_FILE`` as list
-read_imlui_config_file <- function(create_from_template_if_missing = TRUE) {
+read_imlui_config_file <- function(create_if_missing = TRUE) {
   imlui_config.yml <- get_imlui_config_file(
-    create_from_template_if_missing = create_from_template_if_missing
+    create_if_missing = create_if_missing
   )
   logsne("Reading", imlui_config.yml, "...")
   yml_raw <- yaml::read_yaml(imlui_config.yml)
-  yml <- sub_vars_in_imlui_config_file(
-    yml = yml_raw,
-    IMLUI_CONFIG_DIR = get_imlui_config_dir()
-  )
-  cache_env$imlui_config <- yml
-  cache_env$imlui_config
+  yml <- gsub_yml(yml = yml_raw, IMLUI_CONFIG_DIR = get_imlui_config_dir())
+  return(yml)
 }
-read_imlui_config_file_mem <- memoise::memoise(read_imlui_config_file)
 
-# Replaces all occurences of string "${IMLUI_CONFIG_DIR}" in file `yml` with the
-# actual value of `IMLUI_CONFIG_DIR`, which is determined at runtime. This
+# Replaces all occurences of string "${IMLUI_CONFIG_DIR}" in file `yml` with
+# the actual value of `IMLUI_CONFIG_DIR`, which is determined at runtime. This
 # function is intended to be used by function `read_imlui_config_file` for
 # patching the contents of `IMLUI_CONFIG_FILE`.
-sub_vars_in_imlui_config_file <- function(yml, IMLUI_CONFIG_DIR) {
+gsub_yml <- function(yml, IMLUI_CONFIG_DIR) {
   if (is.list(yml)) {
-    return(lapply(yml, sub_vars_in_imlui_config_file, IMLUI_CONFIG_DIR))
+    return(lapply(yml, gsub_yml, IMLUI_CONFIG_DIR))
   } else {
-    (
-      return(
-        gsub(
-          pattern = "${IMLUI_CONFIG_DIR}",
-          replacement = IMLUI_CONFIG_DIR,
-          x = yml,
-          fixed = TRUE
-        )
+    return(
+      gsub(
+        pattern = "${IMLUI_CONFIG_DIR}",
+        replacement = IMLUI_CONFIG_DIR,
+        x = yml,
+        fixed = TRUE
       )
     )
   }
@@ -46,7 +39,7 @@ get_imlui_config_dir <- function() {
 }
 
 # Return path to <IMLUI_CONFIG_FILE> as string
-get_imlui_config_file <- function(create_from_template_if_missing) {
+get_imlui_config_file <- function(create_if_missing) {
   norm <- function(...) {
     toscutil::norm_path(..., sep = sep)
   }
@@ -119,7 +112,7 @@ get_imlui_config_file <- function(create_from_template_if_missing) {
     create = TRUE,
     sep = "/"
   )
-  if (create_from_template_if_missing) {
+  if (create_if_missing) {
     file.copy(s, d)
   }
   return(norm(d, "imlui_config.yml"))

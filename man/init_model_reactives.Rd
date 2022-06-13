@@ -4,16 +4,33 @@
 \alias{init_model_reactives}
 \title{Return list of reactives related to Model Metadata}
 \usage{
-init_model_reactives(rvs, db)
+init_model_reactives(input, rv, db)
 }
 \arguments{
-\item{rvs}{List of reactive values as returned by
+\item{input}{Input object as handed over to server functions by shiny}
+
+\item{rv}{List of reactive values as returned by
 \code{\link[=init_reactive_values]{init_reactive_values()}}}
 
 \item{db}{DB object as returned by \code{DB$new()}}
 }
 \value{
-List of reactives with following names: df, ids,
+list with following elements:
+\itemize{
+\item \code{tbl}: reactive, "Models" table fetched from \code{db}
+\item \code{ids}: reactive, all elements of \code{tbl$ID} that may be accessed by the
+current user
+\item \code{symbols}: reactive, \code{R} objects corresponding to \code{ids()}
+\item \code{displaynames}: reactive, display names corresponding to \code{ids()}
+\item \code{pkgs}: reactive, R packages providing \code{symbols}
+\item \code{features}: list of reactives, feature names for each symbol in \code{symbols()}
+\item \code{params}: list of reactives, model params for each symbol in \code{symbols()}
+\item \code{symbols_list}: reactive, list of symbols currently selected by the user
+\item \code{features_list}: reactive, list of feature name vectors corresponding to
+\code{symbols_list()}
+\item \code{params_list}: reactive, list of  model param vectors corresponding to
+\code{symbols_list()}
+}
 }
 \description{
 Return list of reactives related to Model Metadata
