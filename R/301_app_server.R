@@ -20,7 +20,7 @@ web_app_ui_server <- function(data) {
 	## TODO: Model-Description Text-Output
 	ses$output$MA_MD_TO <- renderPrint({
 		# logsne("MA_DD_TO")
-		pp <- ses$r$model$params_list()()
+		pp <- ses$r$model$betas_list()()
 		for (i in seq_along(pp)) {
 			cat(names(pp)[[i]], "\n", sep="")
 			str(pp[[i]], max.level=NA)

@@ -5,8 +5,3 @@ init_reactives <- function(input, output, session, const, rv) {
   prediction <- init_prediction_reactives(rv) # todo
   return(function_locals())
 }
-
-
-
-
-

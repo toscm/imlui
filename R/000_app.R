@@ -1,4 +1,4 @@
-imluiApp <- function(config_file = NULL,
+imlui_app <- function(config_file = NULL,
                      config_dir = NULL,
                      host = "0.0.0.0",
                      port = PORT,
@@ -6,10 +6,6 @@ imluiApp <- function(config_file = NULL,
                      display.mode = "normal", # c("auto", "normal", "showcase")
                      test.mode = FALSE) { # used for automated tests
   logsne("ImluiApp started from process ID:", Sys.getpid(), "...")
-  shiny::addResourcePath(
-    prefix = "imlui/assets",
-    system.file("assets", package = "imlui")
-  )
   shinyApp(
     ui = ui,
     server = server,
@@ -31,6 +27,6 @@ imluiApp <- function(config_file = NULL,
   )
 }
 
-runImluiApp <- function(...) {
-  runApp(imluiApp(...))
+serve_imlui_app <- function(...) {
+  runApp(imlui_app(...))
 }

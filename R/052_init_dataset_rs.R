@@ -17,7 +17,7 @@ init_dataset_reactives <- function(input, rv) {
   logsne("Initializing Dataset Reactives")
 
   # Reactives depending only on `rv` that return vectors.
-  ids <- reactive(get_accessible_dataset_ids(rv))
+  ids <- reactive(init_accessible_dataset_ids(rv))
   symbols <- reactive(rv$db$datasets[ids(), "Symbol"])
   displaynames <- reactive(`names<-`(rv$db$datasets[ids(), "Name"], symbols()))
   pkgs <- reactive(`names<-`(rv$db$datasets[ids(), "Package"], symbols()))
@@ -26,30 +26,40 @@ init_dataset_reactives <- function(input, rv) {
   )
 
   # Lists of reactives (one element per dataset) depending only on `rv`. Access
-  # via `<reactive>[<dataset_symbol>]()`, e.g. `df$lamis_test1()`.
-  df <- clapply(symbols(), function(s) {
-    reactive({
-      x <- getdata( # dataframe of observed values
-        sym = s,
-        typ = "dataset",
-        pkg = pkgs()[s],
-        transpose = transpose()[s]
-      )
-      x <- do.call(dplyr::rename, list(x, FEATURE_MAPPINGS[[s]]))
+  # via `<reactive>()[<dataset_symbol>]()`, e.g. `df()[["lamis_test1"]]()`.
+  df <- reactive(
+    clapply(symbols(), function(s) {
+      reactive({
+        x <- getdata( # dataframe of observed values
+          sym = s,
+          typ = "dataset",
+          pkg = pkgs()[s],
+          transpose = transpose()[s]
+        )
+        x <- do.call(dplyr::rename, list(x, FEATURE_MAPPINGS[[s]]))
+      })
     })
-  })
-  df_cat <- clapply(rv$db$datasets$Symbol, function(s) {
-    reactive(select(df[[s]](), where(is.factor))) # categorical values
-  })
-  df_num <- clapply(rv$db$datasets$Symbol, function(s) {
-    reactive(select(df[[s]](), !where(is.factor))) # numerical values
-  })
-  features <- clapply(symbols(), function(s) {
-    reactive(colnames(df[[s]]()))
-  })
-  samples <- clapply(symbols(), function(s) {
-    reactive(rownames(df[[s]]()))
-  })
+  )
+  df_cat <- reactive(
+    clapply(rv$db$datasets$Symbol, function(s) {
+      reactive(select(df()[[s]](), where(is.factor))) # categorical values
+    })
+  )
+  df_num <- reactive(
+    clapply(rv$db$datasets$Symbol, function(s) {
+      reactive(select(df()[[s]](), !where(is.factor))) # numerical values
+    })
+  )
+  features <- reactive(
+    clapply(symbols(), function(s) {
+      reactive(colnames(df()[[s]]()))
+    })
+  )
+  samples <- reactive(
+    clapply(symbols(), function(s) {
+      reactive(rownames(df()[[s]]()))
+    })
+  )
 
   # Reactives depending on `input` and `rv` that return lists.
   symbols_list <- reactive(
@@ -60,7 +70,7 @@ init_dataset_reactives <- function(input, rv) {
     }
   )
   df_list <- reactive(
-    clapply(symbols_list(), function(s) df[[s]]())
+    clapply(symbols_list(), function(s) df()[[s]]())
   )
   df_cat_list <- reactive(
     clapply(XX(), function(X) select(X, where(is.factor)))
@@ -69,27 +79,11 @@ init_dataset_reactives <- function(input, rv) {
     clapply(XX(), function(X) select(X, !where(is.factor)))
   )
   samples_list <- reactive(
-    clapply(symbols_list(), function(s) samples[[s]]())
+    clapply(symbols_list(), function(s) samples()[[s]]())
   )
   features_list <- reactive(
-    clapply(symbols_list(), function(s) features[[s]]())
+    clapply(symbols_list(), function(s) features()[[s]]())
   )
 
   return(function_locals())
-}
-
-get_accessible_dataset_ids <- function(rv) {
-  valid_ids <- rv$db$datasets[nchar(rv$db$datasets$Symbol) > 0, "ID"]
-  if (grepl("admin", rv$user$group_ids)) {
-    return(valid_ids)
-  } else {
-    mgd <- rv$db$mapping_groups_datasets
-    idx1 <- stringr::str_detect(rv$user$group_ids, pattern = mgd$group_id)
-    ids1 <- mgd$dataset_id[idx1]
-    mud <- rv$db$mapping_users_datasets
-    idx2 <- mud$user_id == rv$user$id
-    ids2 <- mud$dataset_id[idx2]
-    authorized_ids <- unique(c(ids1, ids2))
-    return(intersect(valid_ids, authorized_ids))
-  }
 }

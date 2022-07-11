@@ -24,6 +24,7 @@ ui <- function(request) {
       ),
       shinyjs::extendShinyjs(text = js_return_click(), functions = c()),
       # uiOutput(outputId="webapp")
+      fluidPage("Helloworld")
     )
   )
 }

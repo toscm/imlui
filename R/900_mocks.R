@@ -1,7 +1,6 @@
 #' @title Return a MockShinySession object (for Testing Purposes)
 #' @return R6 MockShinySession object
 mock_session_obj <- function() {
-  reactiveConsole(enabled=TRUE)
   session <- shiny::MockShinySession$new()
   session$clientData <- list(
     url_search = "",
@@ -49,10 +48,11 @@ mock_args <- function(func, ...) {
 
 #' @title Return a reactivevalues Object (for Testing Purposes)
 #' @param user_id Either 'toscm', 'max', 'public' or NULL
-mock_rv_obj <- function(user_id = "max") {
-  reactiveConsole(enabled = TRUE)
+mock_rv_obj <- function(user_id = NULL) {
   rv <- init_reactive_values(db = mock_db_obj())
-  if (user_id == "toscm") {
+  if (is.null(user_id)) {
+    # do nothing
+  } else if (user_id == "toscm") {
     rv$user$id <- "toscm"
     rv$user$group_ids <- "admin;spang;public"
   } else if (user_id == "max") {
@@ -61,8 +61,6 @@ mock_rv_obj <- function(user_id = "max") {
   } else if (user_id == "public") {
     rv$user$id <- "public"
     rv$user$group_ids <- "public"
-  } else if (is.null(user_id)) {
-    rv$user$id <- NULL
   } else {
     stop("user_id must be 'toscm', 'max', 'public' or NULL, not:", user_id)
   }

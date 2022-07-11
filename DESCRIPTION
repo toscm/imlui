@@ -25,6 +25,7 @@ Imports:
     glue,
     htmltools,
     httr,
+    logger,
     lubridate,
     magrittr,
     plyr,

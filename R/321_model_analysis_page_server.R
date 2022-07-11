@@ -6,7 +6,7 @@ tab__model_analysis <- function(data) {
       xx = NXX(),
       xt = input$MSDP_XT,
       yt = input$MSDP_YT,
-      ff = if (not.none(input$MSDP_M) && input$MSDP_MFO) ses$r$model$features[[input$MSDP_M]]() else ""
+      ff = if (not.none(input$MSDP_M) && input$MSDP_MFO) ses$r$model$features()[[input$MSDP_M]]() else ""
     )
   })
   output$MSDP <- renderSVG(.name = "MSDP", .func = makeMSDPlot, .argfunc = MSDP)
@@ -19,7 +19,7 @@ tab__model_analysis <- function(data) {
     .f <- input$FEP_F
     .v <- input$FEP_V
     .m <- if (not.none(ses$r$model$symbol_list())) ses$r$model$symbol_list()[[1]] else NULL
-    b <- if (not.none(.m)) ses$r$model$params[[.m]]() else NULL
+    b <- if (not.none(.m)) ses$r$model$betas()[[.m]]() else NULL
     X <- if (not.none(.d)) df[[.d]]() else NULL
     s <- if (not.none(.s) && not.none(X) && .s %in% rownames(X)) .s else NULL
     debug <- input$FEP_DBG

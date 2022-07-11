@@ -395,12 +395,12 @@ Create separate environments for process data, e.g. `pdat` and session data, e.g
 | 190_server_utils.R                 | 4    |         |
 | 140_init_observers.R               | next |         |
 | 135_init_prediction_reactives.R    | 1    |         |
-| 134_init_dataset_reactives.R       | ok   | exists  |
-| 133_init_size_reactives.R          | ok   | exists  |
-| 132_init_model_reactives.R         | ok   | exists  |
+| 134_init_dataset_reactives.R       | ok   | ok      |
+| 133_init_size_reactives.R          | ok   | ok      |
+| 132_init_model_reactives.R         | ok   | ok      |
 | 130_init_reactives.R               | 2    |         |
 | 120_init_reactive_values.R         | ok   | trivial |
-| 110_init_server_constants.R        | ok   | exists  |
+| 110_init_server_constants.R        | ok   | ok      |
 | 100_init_server_data.R             | 3    |         |
 | 050_config.R                       | ok   |         |
 | 040_db.R                           | ok   |         |
@@ -408,3 +408,6 @@ Create separate environments for process data, e.g. `pdat` and session data, e.g
 | 020_server.R                       |      |         |
 | 010_cli.R                          |      |         |
 | 000_app.R                          | ok   | trivial |
+
+Note: use mock functions to create testcases for trivial function:
+<https://cran.r-project.org/web/packages/mockery/vignettes/mocks-and-testthat.html>.

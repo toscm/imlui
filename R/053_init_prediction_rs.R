@@ -4,11 +4,11 @@ init_prediction_reactives <- function(rv, model_reactives, dataset_reactives) {
   # List of reactives. One reactive per prediction of a model for a dataset.
   # Access via prediction$model$dataset. Structure: list(list(reactive(num))).
   model_symbols <- function() {
-    clapply(db$get_table("Models")$Symbol, function(m) {
-      clapply(db$get_table("Datasets")$Symbol, function(d) {
+    clapply(model_reactives$symbols, function(m) {
+      clapply(datasets_reactives$symbols, function(d) {
         reactive({
           purrr::possibly(.f = predict, otherwise = NULL)( # 1
-            ses$r$model$params[[m]](), df[[d]]()
+            ses$r$model$betas()[[m]](), df[[d]]()
           )
         })
       })

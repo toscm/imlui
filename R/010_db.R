@@ -15,12 +15,13 @@ DB <- R6::R6Class(
       "assets/sqlite/imlui_db.sqlite",
       package = "imlui"
     ),
+
     #' @description #' Create and connect a new DB object
     #' @param config Either list(type="sqlite", filepath="...") or
     #' list(type="postgres", hostname="...", port="...", database="...",
     #' username="...", password="...")
     #' @return A new `DB` object.
-    initialize = function(config = pkg$imlui_config) {
+    initialize = function(config = pkg$imlui_config$dbms) {
       do.call(rlang::env_bind, c(self, config))
       return(invisible(self$connect()))
     },
@@ -155,15 +156,15 @@ DB <- R6::R6Class(
       return(invisible(self))
     },
     init_postgres_db_with_default_values = function() {
-        log0ne(
-          "Found no tables in `", self$hostname, ":", self$port, "/",
-          self$database, "`:\nInitializing with default values ..."
-        )
-        default_db <- DBI::dbConnect(RSQLite::SQLite(), self$default_filepath)
-        on.exit(DBI::dbDisconnect(default_db))
-        for (tbl in DBI::dbListTables(default_imlui_db)) {
-          DBI::dbWriteTable(self$conn, tbl, value = DBI::dbReadTable(default_db, tbl))
-        }
+      log0ne(
+        "Found no tables in `", self$hostname, ":", self$port, "/",
+        self$database, "`:\nInitializing with default values ..."
+      )
+      default_db <- DBI::dbConnect(RSQLite::SQLite(), self$default_filepath)
+      on.exit(DBI::dbDisconnect(default_db))
+      for (tbl in DBI::dbListTables(default_imlui_db)) {
+        DBI::dbWriteTable(self$conn, tbl, value = DBI::dbReadTable(default_db, tbl))
+      }
     }
   )
 )

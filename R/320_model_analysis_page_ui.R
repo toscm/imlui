@@ -48,7 +48,7 @@ model_analysis_page <- function(data) {
             fluidRow(
               column(2, selectInput(inputId="FEP_D", label="Dataset", choices=DD())),
               column(2, selectInput(inputId="FEP_S", label="Sample", choices=SS()[[input$FEP_D]])),
-              column(2, selectInput(inputId="FEP_F", label="Feature", choices=names(ses$r$model$params_list()()[[1]]))),
+              column(2, selectInput(inputId="FEP_F", label="Feature", choices=names(ses$r$model$betas_list()()[[1]]))),
               {
                 d <- input$FEP_D # dataset
                 s <- input$FEP_S # sample
