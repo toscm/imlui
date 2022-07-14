@@ -38,82 +38,107 @@ cat0se <- function(..., sep = "", end = " ") {
 
 # Logging Functions
 logerr <- function(...) {
-  if(!isTRUE(getOption("imlui.suppress_log_messages"))) {
+  if (!isTRUE(getOption("imlui.suppress_log_messages"))) {
     cat0se(now_ms(), ":")
     caterr(...)
   }
 }
 log2e <- function(...) {
-  if(!isTRUE(getOption("imlui.suppress_log_messages"))) {
+  if (!isTRUE(getOption("imlui.suppress_log_messages"))) {
     cat0se(now_ms(), ":")
     cat2e(...)
   }
 }
 log0e <- function(...) {
-  if(!isTRUE(getOption("imlui.suppress_log_messages"))) {
+  if (!isTRUE(getOption("imlui.suppress_log_messages"))) {
     cat0se(now_ms(), ":")
     cat0e(...)
   }
 }
 logfe <- function(...) {
-  if(!isTRUE(getOption("imlui.suppress_log_messages"))) {
+  if (!isTRUE(getOption("imlui.suppress_log_messages"))) {
     cat0se(now_ms(), ":")
     catfe(...)
   }
 }
 logne <- function(...) {
-  if(!isTRUE(getOption("imlui.suppress_log_messages"))) {
+  if (!isTRUE(getOption("imlui.suppress_log_messages"))) {
     cat0se(now_ms(), ":")
     catne(...)
   }
 }
 log00e <- function(...) {
-  if(!isTRUE(getOption("imlui.suppress_log_messages"))) {
+  if (!isTRUE(getOption("imlui.suppress_log_messages"))) {
     cat0se(now_ms(), ":")
     cat00e(...)
   }
 }
 log0ne <- function(...) {
-  if(!isTRUE(getOption("imlui.suppress_log_messages"))) {
+  if (!isTRUE(getOption("imlui.suppress_log_messages"))) {
     cat0se(now_ms(), ":")
     cat0ne(...)
   }
 }
 logfne <- function(...) {
-  if(!isTRUE(getOption("imlui.suppress_log_messages"))) {
+  if (!isTRUE(getOption("imlui.suppress_log_messages"))) {
     cat0se(now_ms(), ":")
     catfne(...)
   }
 }
 lognne <- function(...) {
-  if(!isTRUE(getOption("imlui.suppress_log_messages"))) {
+  if (!isTRUE(getOption("imlui.suppress_log_messages"))) {
     cat0se(now_ms(), ":")
     catnne(...)
   }
 }
 logsne <- function(...) {
-  if(!isTRUE(getOption("imlui.suppress_log_messages"))) {
+  if (!isTRUE(getOption("imlui.suppress_log_messages"))) {
     cat0se(now_ms(), ":")
     catsne(...)
   }
 }
 logsse <- function(...) {
-  if(!isTRUE(getOption("imlui.suppress_log_messages"))) {
+  if (!isTRUE(getOption("imlui.suppress_log_messages"))) {
     cat0se(now_ms(), ":")
     catsse(...)
   }
 }
 log0se <- function(...) {
-  if(!isTRUE(getOption("imlui.suppress_log_messages"))) {
+  if (!isTRUE(getOption("imlui.suppress_log_messages"))) {
     cat0se(now_ms(), ":")
     cat0se(...)
   }
 }
 
+infomsg <- function(...,
+                    start = "",
+                    sep = " ",
+                    end = "\n") {
+  if (!isTRUE(getOption("imlui.suppress_info_messages"))) {
+    # If this function gets called from the server or any descendant, there
+    # should be a `ses` object available in the parent (i.e. calling)
+    # environments, containing the session ID (sid) and user ID (uid), which
+    # we print. If there is no `ses` object available, we just print sid==0 and
+    # uid=='null'. The only exeption is during `init_data`, i.e. when we create
+    # the `ses` object. Here we directly look for the variable `sid`.
+    ses <- dynGet("ses", NULL)
+    if (is.null(ses)) {
+      sid <- dynGet("sid", 0)
+      uid <- "null"
+    } else {
+      sid <- ses$sid
+      uid <- isolate(ses$rv$user$id) %||% "null"
+    }
+    rv <- dynGet("rv", list())
+    second <- glue("{now_ms()} {sid} {uid}: ")
+    base::message(start, appendLF = FALSE)
+    base::message(second, appendLF = FALSE)
+    base::message(paste(..., sep = sep), appendLF = FALSE)
+    base::message(end, appendLF = FALSE)
+  }
+}
+
 # Helpers
 now_ms <- function() {
-  withr::with_options(
-    new = list(digits.secs = 2), 
-    code = as.character(lubridate::now())
-  )
+  format(Sys.time(), "%Y-%m-%d %H:%M:%OS3")
 }

@@ -6,7 +6,9 @@
 \title{The LAMIS training data}
 \format{
 A data.frame with 233 obs. of 20524 variables. Columns 1-22
-contain the following variables:\preformatted{1. Gender [Levels: female, male]
+contain the following variables:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{1. Gender [Levels: female, male]
 2. Age [Range: 17-92]
 3. Tissue [Levels: lymphnode]
 4. Disease [Levels: Lymphoma]
@@ -28,7 +30,7 @@ contain the following variables:\preformatted{1. Gender [Levels: female, male]
 20. IPI_ECOG [Levels: 0, 0.23, 1]
 21. IPI_STAGE [Levels: 0, 0.39, 1]
 22. IPI_EXBM [Levels: 0, 0.07, 1]
-}
+}\if{html}{\out{</div>}}
 
 Columns 23-20524 contain log2 transformed gene expression values.
 }

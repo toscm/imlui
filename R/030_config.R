@@ -3,7 +3,7 @@ read_imlui_config_file <- function(create_if_missing = TRUE) {
   imlui_config.yml <- get_imlui_config_file(
     create_if_missing = create_if_missing
   )
-  logsne("Reading", imlui_config.yml, "...")
+  infomsg("Reading", imlui_config.yml, "...")
   yml_raw <- yaml::read_yaml(imlui_config.yml)
   yml <- gsub_yml(yml = yml_raw, IMLUI_CONFIG_DIR = get_imlui_config_dir())
   return(yml)

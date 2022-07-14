@@ -1,9 +1,9 @@
 print_startup_message <- function() {
-	logsne("Starting server from process ID:", Sys.getpid(), "...")
+	infomsg("Starting server from process ID:", Sys.getpid(), "...")
 }
 
 configure_bookmarking <- function() {
-	logsne("Configuring Bookmark excludes...")
+	infomsg("Configuring Bookmark excludes...")
 	setBookmarkExclude(c(
 		"dim",
 		"login_button",
@@ -61,7 +61,9 @@ asSVG <- function(
 	outfile <- paste0(file.path(get_imlui_cache_dir(), .pname), ".svg")
 	argListChar <- deparse(substitute(.arglist))
 	if (none(.arglist, is.null)) {
-		log0ne("Storing result of ", .fname, "(...) in svg of size:", width, "x", height)
+		infomsg(
+			"Storing result of", .fname, "(...) in svg of size:", width, "x", height
+		)
 		# STR(.arglist, max.level=1)
 		svglite(outfile, width=width/92, height=height/92)
 		tryCatch(
@@ -72,7 +74,7 @@ asSVG <- function(
 	} else {
 		if (!exists(outfile)) {
 			# Create dummy file if .arglist is invalid and no file exists yet
-			# logsne(glue("{.pname}: plot(1:10)\n"))
+			# infomsg(glue("{.pname}: plot(1:10)\n"))
 			# STR(.arglist, appstate[["DEBUG_LEVEL"]])
 			svglite(outfile, width=width/92, height=height/92)
 			tryCatch(
@@ -82,7 +84,7 @@ asSVG <- function(
 			)
 		} else {
 			# Use existing file until inputs are valid again
-			# logsne(glue("{.pname}: using cached file {outfile}\n"))
+			# infomsg(glue("{.pname}: using cached file {outfile}\n"))
 		}
 	}
 	list(src=outfile, width=width, height=height, alt=.pname)

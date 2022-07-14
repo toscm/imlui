@@ -4,7 +4,7 @@ web_app_ui_server <- function(data) {
 	ses$output$AI_TO <- renderUI({
 		div( HTML( paste0(
 			"<b>UserID:</b> ",         USER_ID(),                 "<br>",
-			"<b>Version:</b> ",        V,                         "<br>",
+			"<b>Version:</b> ",        imlui_version(),           "<br>",
 			"<b>Browser Window:</b> ", BW(),  " x ", BH(), " px", "<br>",
 			"<b>Main Panel:</b> ",     MPW(), " x ", MPH()," px", "<br>",
 			"<b>Plot Area:</b> ",      PAW(), " x ", PAH()," px", "<br>",
@@ -19,7 +19,7 @@ web_app_ui_server <- function(data) {
 
 	## TODO: Model-Description Text-Output
 	ses$output$MA_MD_TO <- renderPrint({
-		# logsne("MA_DD_TO")
+		# infomsg("MA_DD_TO")
 		pp <- ses$r$model$betas_list()()
 		for (i in seq_along(pp)) {
 			cat(names(pp)[[i]], "\n", sep="")

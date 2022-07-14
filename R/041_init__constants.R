@@ -1,5 +1,5 @@
 init_server_constants <- function(session, db) {
-  logsne("Parsing session URL ...")
+  infomsg("Parsing session URL ...")
   x <- session$clientData
   url_search <- isolate(x$url_search)
   url_protocol <- isolate(x$url_protocol) # eg. "http:", "https:"
@@ -21,9 +21,9 @@ init_server_constants <- function(session, db) {
     redirect_uri = github_redirect_url
     # 1 TODO: take from database
   )
-  logsne("URL:", url)
+  infomsg("URL:", url)
 
-  logsne("Generating init values from database...")
+  infomsg("Generating init values from database...")
   settings <- local({
     df <- db$get_table("settings")
     x <- df$Value

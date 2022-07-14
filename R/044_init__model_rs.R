@@ -16,7 +16,7 @@
 #' * `betas_list`: reactive, list of  model param vectors corresponding to
 #'   `symbols_list()`
 init_model_reactives <- function(input, rv) {
-  logsne("Initializing model reactives ...")
+  infomsg("Initializing model reactives ...")
 
   # Reactives depending only on `rv` that return vectors.
   ids <- reactive(init_accessible_model_ids(rv))

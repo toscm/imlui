@@ -4,7 +4,7 @@
 \alias{function_locals}
 \title{Return function environment as list}
 \usage{
-function_locals(strip_function_args = TRUE)
+function_locals(without = c(), strip_function_args = TRUE)
 }
 \arguments{
 \item{strip_function_args}{Whether to exclude symbols with the same name as

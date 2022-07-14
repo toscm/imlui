@@ -14,7 +14,7 @@
 #'    selected by the current user
 
 init_dataset_reactives <- function(input, rv) {
-  logsne("Initializing Dataset Reactives")
+  infomsg("Initializing Dataset Reactives")
 
   # Reactives depending only on `rv` that return vectors.
   ids <- reactive(init_accessible_dataset_ids(rv))

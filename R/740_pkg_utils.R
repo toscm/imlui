@@ -404,7 +404,6 @@ predict.numeric <- function(object, ...) {
   } else {
     fm <- NULL
   }
-  # browser()
   if (class(b) == "matrix" || class(b) == "array") {
     if (ncol(b) == 1) {
       b2 <- b[, 1] # preserved colnames as names
@@ -472,9 +471,14 @@ STR <- function(...) {
   sink()
 }
 
-# String containing current package version, e.g. '0.0.0.9010'
-V <- packageVersion("imlui")
-
 visualize <- function(...) {
   print("TODO")
+}
+
+imlui_version <- function() {
+  # We can't use `imlui_version()` because this only works after a true
+  # installation but not after `devtools::load`.
+  system.file("DESCRIPTION", package="imlui") %>%
+    readr::read_file() %>%
+    gsub(".*Version: (.*?)\n.*", "\\1", .)
 }

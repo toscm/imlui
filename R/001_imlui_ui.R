@@ -1,6 +1,6 @@
 # See README/#ui-layout for an overview
-ui <- function(request) {
-  logsne("Starting ui func from process ID:", Sys.getpid(), "...")
+imlui_ui <- function(request) {
+  infomsg("Starting ui func from process ID:", Sys.getpid(), "...")
   tagList(
     tags$head(tags$style(HTML("html, body {height: 100%; margin: 0;}"))),
     fluidPage(
@@ -8,7 +8,7 @@ ui <- function(request) {
       style="min-height: calc(100vh - 50px);",
       htmltools::htmlDependency(
         name = "imlui-assets",
-        version = packageVersion("imlui"),
+        version = imlui_version(),
         package = "imlui",
         src = "assets",
         script = c(
@@ -23,8 +23,7 @@ ui <- function(request) {
         functions = c("getcookie", "setcookie", "rmcookie")
       ),
       shinyjs::extendShinyjs(text = js_return_click(), functions = c()),
-      # uiOutput(outputId="webapp")
-      fluidPage("Helloworld")
+      uiOutput(outputId="webapp")
     )
   )
 }

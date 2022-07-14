@@ -22,6 +22,7 @@
 #' @importFrom utils capture.output data help packageVersion str
 #' @importFrom shinycssloaders withSpinner
 #' @importFrom memoise memoise
+#' @importFrom toscmask * +
 
 # Globals to shadow tidyverse NSE shit (TODO: remove)
 where <- function() stop("This function should never be called!")

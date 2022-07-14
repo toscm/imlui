@@ -1,5 +1,5 @@
 init_prediction_reactives <- function(rv, model_reactives, dataset_reactives) {
-  logsne("Initializing Prediction Reactives ...")
+  infomsg("Initializing Prediction Reactives ...")
 
   # List of reactives. One reactive per prediction of a model for a dataset.
   # Access via prediction$model$dataset. Structure: list(list(reactive(num))).

@@ -4,7 +4,7 @@ init_size_reactives <- function(input) {
   }
 
   # Browser / Plot Dimensions (alphabetically)
-  logsne("Initializing Browser / Plot Dimensions reactives ...")
+  infomsg("Initializing Browser / Plot Dimensions reactives ...")
 
   # Manual Plot Area Width / Height in pixels
   MPAW <- reactive(input$MPAW)
