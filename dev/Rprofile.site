@@ -1,0 +1,68 @@
+# Setting Options from Rprofile.site
+message("Setting options from Rprofile.site...")
+
+options(
+  repos = c(
+    CRAN = "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"
+  ),
+  download.file.method = "libcurl"
+)
+# https://docs.rstudio.com/rspm/admin/serving-binaries/#binaries-r-configuration-linux
+options(
+  HTTPUserAgent = sprintf(
+    "R/%s R (%s)",
+    getRversion(),
+    paste(
+      getRversion(),
+      R.version["platform"],
+      R.version["arch"],
+      R.version["os"]
+    )
+  )
+)
+
+# Loading Packages
+message("Loading packages from Rprofile.site...")
+
+message("0. configr")
+library("configr")
+message("1. ggplot2")
+library("ggplot2")
+message("2. purrr")
+library("purrr")
+message("3. shiny")
+library("shiny")
+message("4. shinyWidgets")
+library("shinyWidgets")
+message("5. shinydashboard")
+library("shinydashboard")
+message("6. stringr")
+library("stringr")
+message("7. svglite")
+library("svglite")
+message("8. tibble")
+library("tibble")
+message("9. dplyr")
+library("dplyr", include.only = c("rename", "select"))
+message("10. glue")
+library("glue", include.only = c("glue"))
+message("11. graphics")
+library("graphics")
+message("12. grDevices")
+library("grDevices")
+message("13. magrittr")
+library("magrittr", include.only = c("%>%"))
+message("14. rlang")
+library("rlang", include.only = c("env", "env_names", "env_print", "new_environment"))
+message("15. stats")
+library("stats")
+message("16. tibble")
+library("tibble", include.only = c("as_tibble"))
+message("17. utils")
+library("utils")
+message("19. shinycssloaders")
+library("shinycssloaders", include.only = c("withSpinner"))
+message("20. memoise")
+library("memoise", include.only = c("memoise"))
+message("21. toscmask")
+library("toscmask", include.only = c("*", "+"))

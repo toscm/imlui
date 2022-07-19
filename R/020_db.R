@@ -215,7 +215,7 @@ DB <- R6::R6Class(
       if (!file.exists(self$filepath)) {
         infomsg("File", self$filepath, "does not exist")
         catsne("Copying", self$default_filepath, "to", self$filepath, "...")
-        file.copy(default_filepath, self$filepath)
+        file.copy(self$default_filepath, self$filepath)
       }
       self$conn <- DBI::dbConnect(
         drv = RSQLite::SQLite(),

@@ -23,7 +23,8 @@ imlui_ui <- function(request) {
         functions = c("getcookie", "setcookie", "rmcookie")
       ),
       shinyjs::extendShinyjs(text = js_return_click(), functions = c()),
-      uiOutput(outputId="webapp")
+      # uiOutput(outputId="webapp")
+      fluidPage("Helloworld Helloworld v5")
     )
   )
 }

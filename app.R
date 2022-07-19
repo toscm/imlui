@@ -1,2 +1,1 @@
-devtools::load_all()
-imlui_app()
+imlui_app(port = 8080)

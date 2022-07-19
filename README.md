@@ -33,6 +33,8 @@ A user interface (UI) for Interpretable Machine Learning (IML) methods.
   - [How to submit to CRAN?](#how-to-submit-to-cran)
   - [Idea: high performance Architecture](#idea-high-performance-architecture)
   - [Idea: Improve current architecture](#idea-improve-current-architecture)
+  - [Shiny bugfix/workaround: Autoreload for Packages](#shiny-bugfixworkaround-autoreload-for-packages)
+  - [Testing Notes](#testing-notes)
 - [Todos](#todos)
   - [By File](#by-file)
 
@@ -281,8 +283,6 @@ The above principles are inspired by / derived from the direct citations of the 
   - *Format content to support scanning*
 + *Eye-tracking studies of Web page scanning suggest that users decide very quickly in their initial glances which parts of the page are likely to have useful information and then rarely look at the other parts - almost as though they weren't there. (Banner blindness - the ability of users to completely ignore areas they think will contain ads - is just the extreme case.)*
 
-CONTINUE READING ON PAGE 30
-
 ### UI Layout
 
 ```txt
@@ -365,6 +365,59 @@ devtools::release() # Builds, tests and submits the package to CRAN.
 
 Create separate environments for process data, e.g. `pdat` and session data, e.g. `sdat`. Then replace list of reactives for datasets with normal functions. The normal function stores the dataset in `pdat` if not yet available and then returns it. If already available, it directly returns it. Furthermore it stores the timestamp of the last access to that dataset. When a session is closed, datasets that haven't been used for 7 days or longer get deleted.
 
+### Shiny bugfix/workaround: Autoreload for Packages
+
+**The goal**: enable the autoreload feature of shiny, so we can see changes in our code immediately. However, autoreload only works if `shiny::runApp` is called with an actual directory as first argument (not an object of class `shiny.appobj`). This is necessary, so shiny can watch the directory for file changes and in return restart the session (and resource the files).
+
+**Problem 1**: our app is written as package and therefore assumes the presence of packages and functions imported in [NAMESPACE](NAMESPACE) as well as the existence of a package called "imlui" when calling function such as `system.file` or `package.version`. That means, to be able to source (and use) all files (and functions) from folder [R](R), we need to make sure all imports from [NAMESPACE](NAMESPACE) are available and system functions like `system.file` know about the "imlui" package.
+
+**Solution**: call `devtools::load_all()` first, before calling `runApp()`. This is ok, because the files in folder [R](R) are sourced afterwards and therefore will shadow the functions from the initial `devtools::load_all()` command.
+
+**Problem 2**: all code executed during `.onLoad()` (which is called by `devtools::load_all()`) is executed in the package environment. I.e. if we assign variables within our package environment inside this function, those values will not be available in the environment created by `shiny::runApp()`.
+
+**Solution**: as a workaround we can inject some code into our source files changing the behaviour of `.onLoad()` to assign values to `.GlobalEnv` instead of `.packageEnv`, if executed during development. That's not nice, but the only pragmatic workaround I can see. We will use the variable `IMLUI_DEV_MODE` to specify whether we are in development mode (TRUE) or not (anything else incl. undefined).
+
+**Problem 3**: file changes within `R` cause the session to reload, but the changes are not directly visible. This is a known issue and described e.g. in:
+
+* <https://stackoverflow.com/questions/59836751/r-shiny-optionsshiny-autoreload-true-doesnt-work-with-change-in-a-module>
+* <https://github.com/de-data-lab/voucher-eligibility/issues/178>
+* <https://github.com/ThinkR-open/golem/issues/263>
+* <https://github.com/vreederene-90/autoreload.fix>
+
+The reason is, that the return value of the function sourcing the `R/*` files and `app.R` is cached based on the timestamp of `app.R`. In the code of the corresponding function (`shinyAppDir_appR`), there is even an open TODO, saying "TODO: we should support hot reloading on R/*.R changes."
+
+Detailed Code analysis: the following describes what happens, when `shiny::runApp(<some_dir>)` is called, starting from line `appParts <- as.shiny.appobj(appDir)` of function `runApp` from file `runApp.R`.
+
+1. `appParts <- as.shiny.appobj(appDir)`: An object of class `shiny.appobj` is created from the path `appDir`. This is done by calling
+2. `as.shiny.appobj(x=appDir)`, which returns the result of
+3. `as.shiny.appobj.character(x=x)`, which returns the result of
+4. `shinyAppDir(appDir=x)`, which returns the result of
+5. `shinyAppDir_appR("app.R", appDir, options = options)`, which returns
+   ```R
+   structure(
+     list(
+       staticPaths = staticPaths,
+       httpHandler = joinHandlers(...),
+       serverFuncSource = dynServerFuncSource,
+       onStart = onStart,
+       onStop = onStop,
+       options = joinOptions(appObjOptions, options)
+     ),
+     class = "shiny.appobj"
+   )
+   ```
+
+   Here, both, `onStart` and `options` contain calls to `appObj()`, which is a function returned by `cachedFuncWithFile(appDir, fileName, func, case.sensitive = F)`. `appObj` calls `func` whenever the timestamp of `app.R` changes and elsewise returns the cached result of the last execution. `func` itself first sources all files from the "R" folder into an environment called `shared` and then sources `app.R` into a new environment, that has `shared` as a parent. At last it returns the result of the `source("app.R")` command.
+
+**Solution**: we need to replace the function `cachedFuncWithFile` with a function that not only monitores `app.R` for changes but all files in the package folder (with a relevant extension). We can have a look at the source code of `shiny::initAutoReloadMonitor` (file "shiny.app.R") for inspiration.
+
+### Testing Notes
+
+1. Important: whenever feasible, use mock functions to create testcases:
+<https://cran.r-project.org/web/packages/mockery/vignettes/mocks-and-testthat.html>.
+
+2. Either test trivial functons (e.g. by creating mocks for every function call and checking that all functions have been evaluated) or add "no-coverage" comments to the file, so our coverage check knows that those have files are untested on purpose. (Thought: probably it's better to "comment out" trivial functions instead of writing test cases, as this reduces the cost of modifying the code later on and there's not much to be gained from testing a function that is "too simple to fail".)
+
 ## Todos
 
 ### By File
@@ -408,6 +461,3 @@ Create separate environments for process data, e.g. `pdat` and session data, e.g
 | 020_server.R                       |      |         |
 | 010_cli.R                          |      |         |
 | 000_app.R                          | ok   | trivial |
-
-Note: use mock functions to create testcases for trivial function:
-<https://cran.r-project.org/web/packages/mockery/vignettes/mocks-and-testthat.html>.
