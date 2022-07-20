@@ -1,4 +1,4 @@
-init_hndl_bookmark(ses) {
+init_hndl_bookmark <- function(ses) {
   observeEvent(
     reactiveValuesToList(ses$input), # 1)
     ses$session$doBookmark() # 2)

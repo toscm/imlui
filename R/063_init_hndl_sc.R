@@ -1,4 +1,4 @@
-init_hndl_oauth <- function(ses) {
+init_hndl_sc <- function(ses) {
   observeEvent(ses$rv$user_id, hndl_sc_user_id(ses))
   observeEvent(
     ses$session$clientData,
@@ -10,5 +10,3 @@ init_hndl_oauth <- function(ses) {
     act_update_cookie_expiry_date()
   )
 }
-
-

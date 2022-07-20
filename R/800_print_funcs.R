@@ -135,7 +135,7 @@ msg <- function(...,
     }
     rv <- dynGet("rv", list())
     txt <- paste0(before, middle, after, paste(..., sep = sep), end)
-    txt <- reset(col(txt))
+    txt <- crayon::reset(col(txt))
     base::message(txt, appendLF = FALSE)
   }
 }
