@@ -17,6 +17,7 @@ LazyDataCompression: xz
 Imports:
     Biobase,
     configr,
+    crayon,
     DBI,
     docopt,
     dplyr,

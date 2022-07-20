@@ -24,7 +24,7 @@ imlui_ui <- function(request) {
       ),
       shinyjs::extendShinyjs(text = js_return_click(), functions = c()),
       # uiOutput(outputId="webapp")
-      fluidPage("Helloworld Helloworld v5")
+      fluidPage("Helloworld Helloworld v1")
     )
   )
 }

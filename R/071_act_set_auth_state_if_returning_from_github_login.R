@@ -2,14 +2,14 @@
 #' @param ses List of session specific objects as returned by `init_data` once
 #' for every user session
 #' @details Should be called once at the beginning of the server function
-act_set_auth_state_based_on_github_oauth_token <- function(ses) {
-  infomsg("Checking if coming back from Github Auth...")
-  if (is.null(ses$const$url_params$code)) {
-    infomsg("Nope, we don't...")
+act_set_auth_state_if_returning_from_github_login <- function(ses) {
+  if (!is.null(rv$user$id)) {
     return()
-  } else {
-    infomsg("Yes, we do. Fetching user info...")
+    # early stop in case we're already authenticated, e.g. through cookie based
+    # login or google login etc.
   }
+  oa_token_present <- if (is.null(ses$const$url_params$code)) FALSE else TRUE
+  infomsg("Checking if coming back from Github Auth...", oa_token_present)
   github_oauth2_access_token <- httr::oauth2.0_access_token(
     endpoint = httr::oauth_endpoints("github"),
     app = ses$const$shinygithub_oauth_app,
@@ -36,7 +36,7 @@ act_set_auth_state_based_on_github_oauth_token <- function(ses) {
     infomsg("avatar_url:", body$avatar_url %||% "NULL")
     infomsg("name:", body$name %||% "NULL")
     infomsg("email:", body$email %||% "NULL")
-    if (!(body$id %in% database$users$github_id)) {
+    if (!(body$id %in% rv$const$db$users$github_id)) {
       # new user -> create new entry in DB
       new_user <- list(
         user_id = paste0("github_user_", body$id),
@@ -51,14 +51,16 @@ act_set_auth_state_based_on_github_oauth_token <- function(ses) {
 				VALUES ($1, $2, $3, $4, $5)",
         params = unname(new_user)
       )
-      database$users[new_user$user_id, names(new_user)] <<- new_user
+      rv$const$db$users[new_user$user_id, names(new_user)] <<- new_user
     }
-    rv$user$id <- database$users$user_id[which(database$users$github_id == body$id)] # use which to get rid of NAs
-    rv$user$is_authenticated <- TRUE # TODO: remove this. If user$id is NULL, we're not authenticated...
+    idx <- which(rv$const$db$users$github_id == body$id) # which removes NAs
+    rv$user$id <- rv$const$db$users$user_id[idx]
     set_login_cookie(
       db = ses$db,
       user_id = rv$user$id,
-      session_id = ses$session$token)
+      session_id = ses$session$token
+    )
+    ses$rv$login_checked$github <- TRUE
   } else {
     shinyjs::show(id = "login_error")
   }

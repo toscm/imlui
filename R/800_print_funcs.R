@@ -110,11 +110,15 @@ log0se <- function(...) {
   }
 }
 
-infomsg <- function(...,
-                    start = "",
-                    sep = " ",
-                    end = "\n") {
-  if (!isTRUE(getOption("imlui.suppress_info_messages"))) {
+msg <- function(...,
+                col = function(x) x,
+                before = "",
+                middle = glue("{now_ms()} {sid} {uid}"),
+                after = ": ",
+                sep = " ",
+                end = "\n",
+                cond = TRUE) {
+  if (cond) {
     # If this function gets called from the server or any descendant, there
     # should be a `ses` object available in the parent (i.e. calling)
     # environments, containing the session ID (sid) and user ID (uid), which
@@ -130,12 +134,26 @@ infomsg <- function(...,
       uid <- isolate(ses$rv$user$id) %||% "null"
     }
     rv <- dynGet("rv", list())
-    second <- glue("{now_ms()} {sid} {uid}: ")
-    base::message(start, appendLF = FALSE)
-    base::message(second, appendLF = FALSE)
-    base::message(paste(..., sep = sep), appendLF = FALSE)
-    base::message(end, appendLF = FALSE)
+    txt <- paste0(before, middle, after, paste(..., sep = sep), end)
+    txt <- reset(col(txt))
+    base::message(txt, appendLF = FALSE)
   }
+}
+
+infomsg <- function(..., after = " INFO: ", col = green) {
+  msg(..., after = after, col = col)
+}
+
+warnmsg <- function(..., after = " WARNING: ", col = yellow) {
+  msg(..., after = after, col = col)
+}
+
+debugmsg <- function(..., after = " DEBUG: ", col = blue) {
+  msg(..., after = after, col = col)
+}
+
+errormsg <- function(..., after = " ERROR: ", col = red) {
+  msg(..., after = after, col = col)
 }
 
 # Helpers

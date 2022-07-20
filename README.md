@@ -35,6 +35,7 @@ A user interface (UI) for Interpretable Machine Learning (IML) methods.
   - [Idea: Improve current architecture](#idea-improve-current-architecture)
   - [Shiny bugfix/workaround: Autoreload for Packages](#shiny-bugfixworkaround-autoreload-for-packages)
   - [Testing Notes](#testing-notes)
+  - [Event Handlers](#event-handlers)
 - [Todos](#todos)
   - [By File](#by-file)
 
@@ -417,6 +418,35 @@ Detailed Code analysis: the following describes what happens, when `shiny::runAp
 <https://cran.r-project.org/web/packages/mockery/vignettes/mocks-and-testthat.html>.
 
 2. Either test trivial functons (e.g. by creating mocks for every function call and checking that all functions have been evaluated) or add "no-coverage" comments to the file, so our coverage check knows that those have files are untested on purpose. (Thought: probably it's better to "comment out" trivial functions instead of writing test cases, as this reduces the cost of modifying the code later on and there's not much to be gained from testing a function that is "too simple to fail".)
+
+### Event Handlers
+
+In shiny there are two ways to implement reactivity: *observers* and *reactive expressions*. In contrast to to reactive expressions, observer do not return any values and therefore do not cache their return values. There is no clear-cut decision boundary of when to prefer one method over the other, but as a rule of thumb I'm going to do it as follows: everything that writes to `output` should be a reactive expression. Everything that stores a state (in `ses$rv` or `pkg`) should be an observer. Everything in the middle can be either one, although *button-press-reactions* and *one-time-startup-actions* should (also certainly) be implemented as observers.
+
+Actions for handling authentication to be run during startup (hndl_auth):
+
+* hndl_auth_cookie (act_update_cookie_expiry_date)
+* hndl_auth_github (act_set_auth_state_if_returning_from_github_login)
+* hndl_auth_auth_spang_lab
+* hndl_auth_google
+* hndl_auth_gitlab
+* hndl_auth_gitlab_spang_lab
+
+Actions for handling button presses (hndl_btn):
+
+* hndl_btn_login (act_set_auth_state_based_on_credentials)
+* hndl_btn_logout (act_act_remove_cookie_and_reload_session)
+* hndl_btn_login_github (act_start_github_oauth2_flow)
+* hndl_btn_login_auth_spang_lab
+* hndl_btn_login_google
+* hndl_btn_login_gitlab
+* hndl_btn_login_gitlab_spang_lab
+
+Actions for handling state changes (hndl_sc):
+
+* hndl_sc_user_id (act-restore_appstate)
+* hndl_sc_client_data (print_url_parts)
+* hndl_sc_login_jscookie
 
 ## Todos
 

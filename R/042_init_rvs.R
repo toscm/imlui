@@ -14,6 +14,14 @@ init_reactive_values <- function(db) {
       is_authenticated = FALSE, # Deprecated. TODO: Remove
       cookie_already_checked = FALSE # Deprecated. TODO: Remove
     ),
+    login_checked = list(
+      cookie = FALSE,
+      google = FALSE,
+      github = FALSE,
+      gitlab = FALSE,
+      auth_spang_lab = FALSE,
+      gitlab_spang_lab = FALSE
+    ),
     db = list(
       models = `rownames<-`(x <- db$get_table("Models"), x$ID),
       datasets = `rownames<-`(x <- db$get_table("Datasets"), x$ID),

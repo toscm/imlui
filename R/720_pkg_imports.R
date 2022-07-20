@@ -10,6 +10,7 @@
 #' @import tibble
 
 # Selective Imports
+#' @importFrom crayon blue red yellow white
 #' @importFrom dplyr rename select
 #' @importFrom glue glue
 #' @importFrom graphics abline legend lines mtext par rect text
