@@ -15,11 +15,11 @@
 #'   `symbols_list()`
 #' * `betas_list`: reactive, list of  model param vectors corresponding to
 #'   `symbols_list()`
-init_model_reactives <- function(input, rv) {
+init_rs_model <- function(input, rv) {
   infomsg("Initializing model reactives ...")
 
   # Reactives depending only on `rv` that return vectors.
-  ids <- reactive(init_accessible_model_ids(rv))
+  ids <- reactive(init_rs_accessible_model_ids(rv))
   symbols <- reactive(rv$db$models[ids(), "Symbol"])
   displaynames <- reactive(`names<-`(rv$db$models[ids(), "Name"], symbols()))
   pkgs <- reactive(`names<-`(rv$db$models[ids(), "Package"], symbols()))

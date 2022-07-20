@@ -1,4 +1,4 @@
-init_size_reactives <- function(input) {
+init_rs_size <- function(input) {
   if (missing(input)) {
     stop("Argument `input` is missing")
   }

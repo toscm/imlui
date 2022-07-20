@@ -1,4 +1,4 @@
-init_accessible_model_ids <- function(rv) {
+init_rs_accessible_model_ids <- function(rv) {
   valid_ids <- rv$db$models[nchar(rv$db$models$Symbol) > 0, "ID"]
   if (is.null(rv$user)) {
     stop("rv$user must not be null")

@@ -423,30 +423,37 @@ Detailed Code analysis: the following describes what happens, when `shiny::runAp
 
 In shiny there are two ways to implement reactivity: *observers* and *reactive expressions*. In contrast to to reactive expressions, observer do not return any values and therefore do not cache their return values. There is no clear-cut decision boundary of when to prefer one method over the other, but as a rule of thumb I'm going to do it as follows: everything that writes to `output` should be a reactive expression. Everything that stores a state (in `ses$rv` or `pkg`) should be an observer. Everything in the middle can be either one, although *button-press-reactions* and *one-time-startup-actions* should (also certainly) be implemented as observers.
 
-Actions for handling authentication to be run during startup (hndl_auth):
+Actions, i.e. observers, for handling returns from oauth 2.0 providers (`init_hndl_oauth`, should be run during startup):
 
-* hndl_auth_cookie (act_update_cookie_expiry_date)
-* hndl_auth_github (act_set_auth_state_if_returning_from_github_login)
-* hndl_auth_auth_spang_lab
-* hndl_auth_google
-* hndl_auth_gitlab
-* hndl_auth_gitlab_spang_lab
+* hndl_oauth_github (act_set_auth_state_if_returning_from_github_login)
+* hndl_oauth_auth_spang_lab
+* hndl_oauth_google
+* hndl_oauth_gitlab
+* hndl_oauth_gitlab_spang_lab
 
-Actions for handling button presses (hndl_btn):
+Actions for handling button presses (`init_hndl_btn`):
 
 * hndl_btn_login (act_set_auth_state_based_on_credentials)
-* hndl_btn_logout (act_act_remove_cookie_and_reload_session)
 * hndl_btn_login_github (act_start_github_oauth2_flow)
 * hndl_btn_login_auth_spang_lab
 * hndl_btn_login_google
 * hndl_btn_login_gitlab
 * hndl_btn_login_gitlab_spang_lab
+* hndl_btn_logout (act_act_remove_cookie_and_reload_session)
 
-Actions for handling state changes (hndl_sc):
+Actions for handling state changes (`init_hndl_sc`):
 
 * hndl_sc_user_id (act-restore_appstate)
 * hndl_sc_client_data (print_url_parts)
 * hndl_sc_login_jscookie
+
+Actions to be run on session end (`init_hndl_exit`):
+
+* hndl_exit (act_store_appstate)
+
+Actions to be run on "boomarked" event (`init_hndl_bookmark`):
+
+* shiny::updateQueryString
 
 ## Todos
 

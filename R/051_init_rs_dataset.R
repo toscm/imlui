@@ -13,11 +13,11 @@
 #'    reactives returning vectors of ids/symbols/displaynames/...
 #'    selected by the current user
 
-init_dataset_reactives <- function(input, rv) {
+init_rs_dataset <- function(input, rv) {
   infomsg("Initializing Dataset Reactives")
 
   # Reactives depending only on `rv` that return vectors.
-  ids <- reactive(init_accessible_dataset_ids(rv))
+  ids <- reactive(init_rs_accessible_dataset_ids(rv))
   symbols <- reactive(rv$db$datasets[ids(), "Symbol"])
   displaynames <- reactive(`names<-`(rv$db$datasets[ids(), "Name"], symbols()))
   pkgs <- reactive(`names<-`(rv$db$datasets[ids(), "Package"], symbols()))

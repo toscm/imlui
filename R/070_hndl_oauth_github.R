@@ -2,7 +2,7 @@
 #' @param ses List of session specific objects as returned by `init_data` once
 #' for every user session
 #' @details Should be called once at the beginning of the server function
-act_set_auth_state_if_returning_from_github_login <- function(ses) {
+hndl_auth_github <- function(ses) {
   if (!is.null(rv$user$id)) {
     return()
     # early stop in case we're already authenticated, e.g. through cookie based

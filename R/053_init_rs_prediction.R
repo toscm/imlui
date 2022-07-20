@@ -1,4 +1,4 @@
-init_prediction_reactives <- function(rv, model_reactives, dataset_reactives) {
+init_rs_prediction <- function(rv, model_reactives, dataset_reactives) {
   infomsg("Initializing Prediction Reactives ...")
 
   # List of reactives. One reactive per prediction of a model for a dataset.

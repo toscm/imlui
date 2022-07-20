@@ -1,4 +1,4 @@
-act_update_cookie_expiry_date <- function(ses) { # run when_valid_cookie_is_present
+hndl_sc_login_cookie <- function(ses) { # run when_valid_cookie_is_present
   infomsg("Symbol `input$login_jscookie` available, starting authentication")
   rv <- ses$rv
   input <- ses$input
